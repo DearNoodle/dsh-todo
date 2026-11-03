@@ -5,17 +5,46 @@ window.__ModuleLoader__.load({
     const h = React.createElement;
 
     const NS = 'dsh-todo';
-    const STORAGE_KEY = 'dsh-todo:v2';
-    const LEGACY_KEY = 'dsh-todo:v1';
+    const STORAGE_KEY = 'dsh-todo:v3';
+    const NOTES_KEY = 'dsh-todo:notes:v1';
+    const LEGACY_V2 = 'dsh-todo:v2';
+    const LEGACY_V1 = 'dsh-todo:v1';
 
     const EN = {
-      title: 'To Do',
+      defaultPageName: 'My tasks',
+      pages: 'Pages',
+      newPage: 'New page',
+      pageName: 'Page name',
+      viewTasks: 'Tasks',
+      viewNotes: 'Notes',
+      viewsLabel: 'Views',
+      notes: 'Notes',
+      newNote: 'New note',
+      untitledNote: 'Untitled note',
+      noteTitle: 'Note title',
+      noteBodyPlaceholder: 'Start writing…',
+      noteEmptyTitle: 'No notes yet',
+      noteEmptyHint: 'Write a note, then drop or paste images right into it.',
+      noteHint: 'Drop or paste images here',
+      noteSaveError: 'Couldn’t save — browser storage is full. Try a smaller image.',
+      deleteNote: 'Delete note',
+      deleteNoteWarning: 'Delete “{name}”? This cannot be undone.',
+      edited: 'Edited {date}',
+      noteImageAlt: 'Attached image',
+      deletePage: 'Delete page',
+      keepOnePage: 'Keep at least one page',
+      deletePageWarning: 'Delete “{name}”? {n} tasks on this page will be deleted.',
+      deletePageWarningNoTasks: 'Delete “{name}”?',
+      pageStats: '{open} unfinished · {done} done',
+      pageStatsDone: '{done} done',
+      pageStatsEmpty: 'No tasks yet',
       placeholder: 'Add a task…',
-      addToPlaceholder: 'Add a task to {group}…',
       add: 'Add',
       filterAll: 'All',
       filterActive: 'Unfinished',
       filterDone: 'Done',
+      filtersLabel: 'Filters',
+      resetFilters: 'Reset',
       dueFilterLabel: 'Filter by due date',
       dueAny: 'Any date',
       dueToday: 'Today',
@@ -24,13 +53,17 @@ window.__ModuleLoader__.load({
       dueOverdue: 'Overdue',
       dueNone: 'No date',
       clearCompleted: 'Clear completed',
-      groupsAll: 'All',
       groupsInbox: 'Inbox',
-      manageGroups: 'Manage',
-      emptyTitle: 'No tasks yet',
-      emptyHint: 'Add your first task above.',
-      nothingHere: 'Nothing in this view.',
-      groupEmptyHint: 'Add a task to this group above.',
+      newGroup: 'New group',
+      groupName: 'Group name',
+      createGroup: 'Add',
+      deleteGroup: 'Delete group',
+      deleteGroupWarning: 'Delete “{name}”? {n} tasks will move to Inbox.',
+      deleteGroupWarningNoTasks: 'Delete “{name}”?',
+      noTasks: 'No tasks yet',
+      noMatching: 'No matching tasks',
+      emptyTitle: 'This page is empty',
+      emptyHint: 'Add your first task above, or create a group for it.',
       editTask: 'Edit task',
       close: 'Close',
       titleLabel: 'Title',
@@ -43,28 +76,46 @@ window.__ModuleLoader__.load({
       deleteTask: 'Delete task',
       hasDetails: 'Has details',
       clearDate: 'Clear date',
-      newGroup: 'New group',
-      newGroupPlaceholder: 'Group name',
-      createGroup: 'Create',
-      deleteGroup: 'Delete group',
-      deleteGroupWarning: 'Delete “{name}”? {n} tasks will move to Inbox.',
-      deleteGroupWarningNoTasks: 'Delete “{name}”?',
-      groupsEmpty: 'No groups yet.',
       openTask: 'Open task details',
-      itemsLeft: '{n} unfinished',
       markDone: 'Mark as done',
       markActive: 'Mark as unfinished',
-      taskCount: '{n} tasks',
     };
 
     const ZH = {
-      title: '待辦清單',
+      defaultPageName: '我的任務',
+      pages: '頁面',
+      newPage: '新增頁面',
+      pageName: '頁面名稱',
+      viewTasks: '任務',
+      viewNotes: '筆記',
+      viewsLabel: '檢視',
+      notes: '筆記',
+      newNote: '新增筆記',
+      untitledNote: '未命名筆記',
+      noteTitle: '筆記標題',
+      noteBodyPlaceholder: '開始書寫…',
+      noteEmptyTitle: '還沒有筆記',
+      noteEmptyHint: '寫一則筆記，然後把圖片拖曳或貼進來。',
+      noteHint: '可拖曳或貼上圖片',
+      noteSaveError: '無法儲存——瀏覽器儲存空間已滿，請試試較小的圖片。',
+      deleteNote: '刪除筆記',
+      deleteNoteWarning: '刪除「{name}」？此動作無法復原。',
+      edited: '編輯於 {date}',
+      noteImageAlt: '附加圖片',
+      deletePage: '刪除頁面',
+      keepOnePage: '至少保留一個頁面',
+      deletePageWarning: '刪除「{name}」？此頁面的 {n} 項任務也會一起刪除。',
+      deletePageWarningNoTasks: '刪除「{name}」？',
+      pageStats: '{open} 項未完成 · {done} 項已完成',
+      pageStatsDone: '{done} 項已完成',
+      pageStatsEmpty: '尚無任務',
       placeholder: '新增一件事…',
-      addToPlaceholder: '新增到「{group}」…',
       add: '新增',
       filterAll: '全部',
       filterActive: '未完成',
       filterDone: '已完成',
+      filtersLabel: '篩選',
+      resetFilters: '重設',
       dueFilterLabel: '依到期日篩選',
       dueAny: '任何日期',
       dueToday: '今天',
@@ -73,13 +124,17 @@ window.__ModuleLoader__.load({
       dueOverdue: '已逾期',
       dueNone: '無日期',
       clearCompleted: '清除已完成',
-      groupsAll: '全部',
       groupsInbox: '未分組',
-      manageGroups: '管理',
-      emptyTitle: '還沒有待辦事項',
-      emptyHint: '從上面新增第一件事吧。',
-      nothingHere: '這個檢視沒有項目。',
-      groupEmptyHint: '在上面新增此群組的第一件事吧。',
+      newGroup: '新增群組',
+      groupName: '群組名稱',
+      createGroup: '新增',
+      deleteGroup: '刪除群組',
+      deleteGroupWarning: '刪除「{name}」？{n} 項任務會移到未分組。',
+      deleteGroupWarningNoTasks: '刪除「{name}」？',
+      noTasks: '尚無任務',
+      noMatching: '沒有符合篩選的任務',
+      emptyTitle: '這個頁面還沒有任務',
+      emptyHint: '從上面新增第一件事，或先建立一個群組。',
       editTask: '編輯任務',
       close: '關閉',
       titleLabel: '標題',
@@ -92,99 +147,868 @@ window.__ModuleLoader__.load({
       deleteTask: '刪除任務',
       hasDetails: '有詳細內容',
       clearDate: '清除日期',
-      newGroup: '新增群組',
-      newGroupPlaceholder: '群組名稱',
-      createGroup: '建立',
-      deleteGroup: '刪除群組',
-      deleteGroupWarning: '刪除「{name}」？{n} 項任務會移到未分組。',
-      deleteGroupWarningNoTasks: '刪除「{name}」？',
-      groupsEmpty: '還沒有群組。',
       openTask: '開啟任務詳細內容',
-      itemsLeft: '尚餘 {n} 項未完成',
       markDone: '標記為完成',
       markActive: '標記為未完成',
-      taskCount: '{n} 項任務',
     };
 
     const CSS = `
 .dsh-todo-page {
+  --dsh-todo-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   height: 100%;
   overflow-y: auto;
+  container-type: inline-size;
   background: var(--dsw-alias-bg-base);
   color: var(--dsw-alias-label-primary);
 }
 .dsh-todo-page * { box-sizing: border-box; }
 .dsh-todo-shell {
-  max-width: 760px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 40px 24px 96px;
+  padding: 44px 28px 120px;
 }
-.dsh-todo-head {
+.dsh-todo-masthead {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 22px;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
 }
-.dsh-todo-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.dsh-todo-count {
+.dsh-todo-wordmark,
+.dsh-todo-date {
+  font-family: var(--dsh-todo-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
-.dsh-todo-add {
+.dsh-todo-wordmark { font-weight: 600; }
+.dsh-todo-date { font-variant-numeric: tabular-nums; }
+.dsh-todo-masthead-right {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
+  align-items: center;
+  gap: 16px;
 }
-.dsh-todo-input,
-.dsh-todo-date,
-.dsh-todo-control {
-  height: 40px;
-  padding: 0 12px;
+.dsh-todo-viewtabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+.dsh-todo-viewtabs button {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.dsh-todo-viewtabs button[aria-selected="true"] {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-workspace {
+  display: grid;
+  grid-template-columns: clamp(168px, 22%, 208px) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+.dsh-todo-rail {
+  position: sticky;
+  top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 240px;
+  padding-right: 20px;
+  border-right: 1px solid var(--dsw-alias-border-l1);
+}
+.dsh-todo-rail-label {
+  margin: 2px 8px 10px;
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-pagerail-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  padding: 9px 10px 10px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.dsh-todo-pagerail-item:hover {
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-pagerail-item[data-active="true"] {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-pagerail-item[data-active="true"]::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--dsw-alias-brand-primary);
+}
+.dsh-todo-pagerail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.dsh-todo-pagerail-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+}
+.dsh-todo-pagerail-count {
+  flex: none;
+  font-family: var(--dsh-todo-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+.dsh-todo-rail-rule {
+  display: block;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--dsw-alias-border-l1);
+}
+.dsh-todo-rail-rule span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--dsw-alias-brand-primary);
+}
+.dsh-todo-newpage {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 8px 10px;
+  border: 1px dashed var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.dsh-todo-newpage:hover {
+  border-color: var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-pageform {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 8px;
   border: 1px solid var(--dsw-alias-border-l1);
   border-radius: 9px;
   background: var(--dsw-alias-bg-layer-1);
+}
+.dsh-todo-pageform input {
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-base);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+.dsh-todo-pageform input:focus {
+  border-color: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+}
+.dsh-todo-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.dsh-todo-mini {
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.dsh-todo-mini:hover {
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-bg-layer-2);
+}
+.dsh-todo-mini:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.dsh-todo-mini:disabled:hover {
+  color: var(--dsw-alias-label-secondary);
+  background: transparent;
+}
+.dsh-todo-mini-primary {
+  background: var(--dsw-alias-brand-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.dsh-todo-mini-primary:hover {
+  background: var(--dsw-alias-brand-primary);
+  color: #fff;
+  opacity: 0.92;
+}
+.dsh-todo-content { min-width: 0; }
+.dsh-todo-pagehead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: 20px;
+}
+.dsh-todo-pagehead-main {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.dsh-todo-titleinput {
+  width: 100%;
+  margin: 0 0 0 -5px;
+  padding: 1px 5px 3px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  outline: none;
+}
+.dsh-todo-titleinput::placeholder {
+  color: var(--dsw-alias-label-secondary);
+  opacity: 0.55;
+}
+.dsh-todo-titleinput:hover {
+  border-color: var(--dsw-alias-border-l1);
+}
+.dsh-todo-titleinput:focus {
+  border-color: var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-bg-layer-1);
+  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+}
+.dsh-todo-pagestats {
+  margin-top: 7px;
+  font-family: var(--dsh-todo-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-pagehead-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+.dsh-todo-seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+.dsh-todo-seg button {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.dsh-todo-seg button[aria-pressed="true"] {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-duecontrol {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-duecontrol select {
+  max-width: 122px;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+.dsh-todo-reset {
+  padding: 6px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.dsh-todo-reset:hover { color: var(--dsw-alias-label-primary); }
+.dsh-todo-page-delete {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+.dsh-todo-page-delete:hover {
+  border-color: var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-state-error-primary);
+}
+.dsh-todo-page-delete:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.dsh-todo-page-delete:disabled:hover {
+  border-color: var(--dsw-alias-border-l1);
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-composer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 30px;
+  padding: 7px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+.dsh-todo-composer-text {
+  flex: 1 1 220px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
   color: var(--dsw-alias-label-primary);
   font: inherit;
   font-size: 14px;
   outline: none;
 }
-.dsh-todo-input { flex: 1 1 240px; min-width: 0; }
-.dsh-todo-date { flex: none; width: 142px; font-size: 12px; }
-.dsh-todo-input::placeholder { color: var(--dsw-alias-label-secondary); }
-.dsh-todo-input:focus,
-.dsh-todo-date:focus,
+.dsh-todo-composer-text::placeholder { color: var(--dsw-alias-label-secondary); }
+.dsh-todo-composer-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 7px;
+  background: var(--dsw-alias-bg-base);
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-composer-field select,
+.dsh-todo-composer-field input {
+  max-width: 118px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+.dsh-todo-composer-field input[type="date"] { max-width: 128px; }
+.dsh-todo-composer-field select { cursor: pointer; }
+.dsh-todo-composer-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--dsw-alias-brand-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dsh-todo-composer-add:hover { opacity: 0.92; }
+.dsh-todo-composer-add:disabled { opacity: 0.4; cursor: default; }
+.dsh-todo-groups { display: flex; flex-direction: column; }
+.dsh-todo-group { padding: 18px 0 4px; border-top: 1px solid var(--dsw-alias-border-l1); }
+.dsh-todo-group:first-child { padding-top: 0; border-top: 0; }
+.dsh-todo-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin-bottom: 3px;
+}
+.dsh-todo-group-name {
+  flex: 1;
+  min-width: 0;
+  margin-left: -5px;
+  padding: 3px 5px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  outline: none;
+}
+.dsh-todo-group-name::placeholder { color: var(--dsw-alias-label-secondary); }
+.dsh-todo-group-name:hover { border-color: var(--dsw-alias-border-l1); }
+.dsh-todo-group-name:focus {
+  border-color: var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-bg-layer-1);
+  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+}
+.dsh-todo-group-label {
+  flex: 1;
+  min-width: 0;
+  margin-left: -5px;
+  padding: 3px 5px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.dsh-todo-group-count {
+  flex: none;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.dsh-todo-group-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.dsh-todo-group:hover .dsh-todo-group-actions,
+.dsh-todo-group:focus-within .dsh-todo-group-actions { opacity: 1; }
+@media (hover: none) {
+  .dsh-todo-group-actions { opacity: 1; }
+}
+.dsh-todo-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+.dsh-todo-iconbtn:hover {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-group-actions .dsh-todo-iconbtn:hover {
+  color: var(--dsw-alias-state-error-primary);
+}
+.dsh-todo-list { margin: 0; padding: 0; list-style: none; }
+.dsh-todo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -8px;
+  padding: 7px 8px;
+  border-radius: 7px;
+}
+.dsh-todo-row:hover { background: var(--dsw-alias-bg-layer-1); }
+.dsh-todo-check {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--dsw-alias-brand-primary);
+  cursor: pointer;
+}
+.dsh-todo-text {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.dsh-todo-text:hover { color: var(--dsw-alias-brand-primary); }
+.dsh-todo-row[data-done="true"] .dsh-todo-text {
+  color: var(--dsw-alias-label-secondary);
+  text-decoration: line-through;
+  text-decoration-color: var(--dsw-alias-border-l2);
+}
+.dsh-todo-row[data-done="true"] .dsh-todo-text:hover {
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-note {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-due {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 2px;
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dsh-todo-due[data-state="overdue"] { color: var(--dsw-alias-state-error-primary); }
+.dsh-todo-due[data-state="today"] { color: var(--dsw-alias-brand-primary); }
+.dsh-todo-row[data-done="true"] .dsh-todo-due { color: var(--dsw-alias-label-secondary); }
+.dsh-todo-delete {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.dsh-todo-row:hover .dsh-todo-delete,
+.dsh-todo-delete:focus-visible { opacity: 1; }
+.dsh-todo-delete:hover {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-state-error-primary);
+}
+@media (hover: none) {
+  .dsh-todo-delete { opacity: 1; }
+}
+.dsh-todo-group-empty {
+  padding: 7px 8px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+}
+.dsh-todo-newgroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  padding: 8px 10px;
+  border: 1px dashed var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.dsh-todo-newgroup:hover {
+  border-color: var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-todo-clear {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 20px;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.dsh-todo-clear:hover {
+  color: var(--dsw-alias-label-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.dsh-todo-groupform {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+.dsh-todo-groupform input {
+  width: 220px;
+  max-width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.dsh-todo-groupform input:focus {
+  border-color: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+}
+.dsh-todo-pagerail-date {
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  opacity: 0.65;
+}
+.dsh-todo-note-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsh-todo-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.dsh-todo-note-body {
+  min-height: 340px;
+  padding: 18px 20px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 12px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font-size: 14px;
+  line-height: 1.7;
+  outline: none;
+  overflow-wrap: anywhere;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+.dsh-todo-note-body:focus {
+  border-color: var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-bg-layer-2);
+}
+.dsh-todo-note-body:empty::before {
+  content: attr(data-placeholder);
+  color: var(--dsw-alias-label-secondary);
+  pointer-events: none;
+}
+.dsh-todo-note-body.is-dragging {
+  border-color: var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: inset 0 0 0 1px var(--dsw-alias-brand-primary);
+}
+.dsh-todo-note-body p { margin: 0 0 10px; }
+.dsh-todo-note-body p:last-child { margin-bottom: 0; }
+.dsh-todo-note-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+.dsh-todo-note-body a { color: var(--dsw-alias-brand-primary); }
+.dsh-todo-note-body blockquote {
+  margin: 10px 0;
+  padding: 2px 0 2px 12px;
+  border-left: 2px solid var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-label-secondary);
+}
+.dsh-todo-note-body pre,
+.dsh-todo-note-body code {
+  font-family: var(--dsh-todo-mono);
+  font-size: 12px;
+}
+.dsh-todo-note-body pre {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-base);
+  overflow-x: auto;
+}
+.dsh-todo-note-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+}
+.dsh-todo-note-error {
+  margin-top: 9px;
+  color: var(--dsw-alias-state-error-primary);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.dsh-todo-empty {
+  padding: 48px 24px;
+  border: 1px dashed var(--dsw-alias-border-l1);
+  border-radius: 12px;
+  text-align: center;
+}
+.dsh-todo-empty-title { font-size: 14px; font-weight: 600; }
+.dsh-todo-empty-hint {
+  margin-top: 6px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+}
+.dsh-todo-empty .dsh-todo-primary { margin-top: 16px; }
+.dsh-todo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 42%);
+  backdrop-filter: blur(2px);
+}
+.dsh-todo-dialog {
+  width: min(540px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: 20px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 14px;
+  background: var(--dsw-alias-bg-overlay);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 32%);
+}
+.dsh-todo-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.dsh-todo-dialog-title { margin: 0; font-size: 17px; font-weight: 600; }
+.dsh-todo-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.dsh-todo-label {
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dsh-todo-control {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
 .dsh-todo-control:focus {
   border-color: var(--dsw-alias-brand-primary);
   box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
 }
+.dsh-todo-textarea {
+  min-height: 116px;
+  padding: 9px 10px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.dsh-todo-daterow { display: flex; align-items: center; gap: 6px; }
+.dsh-todo-daterow .dsh-todo-control { flex: 1; }
+.dsh-todo-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+}
+.dsh-todo-actions-right { display: flex; align-items: center; gap: 8px; }
 .dsh-todo-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  height: 40px;
+  gap: 5px;
+  height: 38px;
   padding: 0 14px;
   border: 0;
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--dsw-alias-brand-primary);
   color: #fff;
   font: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
   cursor: pointer;
 }
-.dsh-todo-primary:disabled { opacity: 0.45; cursor: default; }
-.dsh-todo-small { height: 34px; padding: 0 12px; border-radius: 8px; font-size: 12px; }
+.dsh-todo-primary:disabled { opacity: 0.4; cursor: default; }
+.dsh-todo-primary:not(:disabled):hover { opacity: 0.92; }
 .dsh-todo-ghost {
   display: inline-flex;
   align-items: center;
@@ -215,352 +1039,100 @@ window.__ModuleLoader__.load({
   cursor: pointer;
 }
 .dsh-todo-danger:hover { background: var(--dsw-alias-bg-layer-2); }
-.dsh-todo-iconbtn {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
+.dsh-todo-confirm-text {
+  margin: 0 0 4px;
   color: var(--dsw-alias-label-secondary);
-  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.55;
 }
-.dsh-todo-iconbtn:hover {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-primary);
+.dsh-todo-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
 }
 .dsh-todo-primary:focus-visible,
 .dsh-todo-ghost:focus-visible,
 .dsh-todo-danger:focus-visible,
 .dsh-todo-iconbtn:focus-visible,
-.dsh-todo-chip:focus-visible,
-.dsh-todo-filter:focus-visible,
+.dsh-todo-mini:focus-visible,
+.dsh-todo-seg button:focus-visible,
+.dsh-todo-viewtabs button:focus-visible,
+.dsh-todo-reset:focus-visible,
+.dsh-todo-pagerail-item:focus-visible,
+.dsh-todo-newpage:focus-visible,
+.dsh-todo-newgroup:focus-visible,
 .dsh-todo-clear:focus-visible,
+.dsh-todo-page-delete:focus-visible,
+.dsh-todo-composer-add:focus-visible,
 .dsh-todo-text:focus-visible,
-.dsh-todo-group-input:focus-visible,
-.dsh-todo-duefilter:focus-within {
+.dsh-todo-delete:focus-visible,
+.dsh-todo-duecontrol:focus-within,
+.dsh-todo-composer-field:focus-within {
   outline: 2px solid var(--dsw-alias-brand-primary);
   outline-offset: 2px;
 }
-.dsh-todo-groups {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-.dsh-todo-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 28px;
-  padding: 0 10px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 999px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-secondary);
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-.dsh-todo-chip:hover {
-  color: var(--dsw-alias-label-primary);
-  border-color: var(--dsw-alias-border-l2);
-}
-.dsh-todo-chip[data-active="true"] {
-  color: var(--dsw-alias-label-primary);
-  background: var(--dsw-alias-bg-layer-2);
-  border-color: var(--dsw-alias-border-l2);
-  font-weight: 500;
-}
-.dsh-todo-chip-count { font-variant-numeric: tabular-nums; opacity: 0.65; }
-.dsh-todo-manage { margin-left: auto; }
-.dsh-todo-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.dsh-todo-filters {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 9px;
-  background: var(--dsw-alias-bg-layer-1);
-}
-.dsh-todo-filter {
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  font: inherit;
-  font-size: 12px;
-  padding: 4px 10px;
-  cursor: pointer;
-}
-.dsh-todo-filter[aria-pressed="true"] {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-primary);
-}
-.dsh-todo-toolbar-right { display: flex; align-items: center; gap: 8px; }
-.dsh-todo-duefilter {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 30px;
-  padding: 0 8px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-secondary);
-}
-.dsh-todo-duefilter select {
-  border: 0;
-  background: transparent;
-  color: var(--dsw-alias-label-primary);
-  font: inherit;
-  font-size: 12px;
-  outline: none;
-  cursor: pointer;
-  max-width: 130px;
-}
-.dsh-todo-clear {
-  border: 0;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  font: inherit;
-  font-size: 12px;
-  padding: 6px 4px;
-  cursor: pointer;
-}
-.dsh-todo-clear:hover { color: var(--dsw-alias-label-primary); }
-.dsh-todo-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--dsw-alias-bg-layer-1);
-}
-.dsh-todo-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-top: 1px solid var(--dsw-alias-border-l1);
-}
-.dsh-todo-row:first-child { border-top: 0; }
-.dsh-todo-row:hover { background: var(--dsw-alias-bg-layer-2); }
-.dsh-todo-check {
-  flex: none;
-  width: 17px;
-  height: 17px;
-  margin: 0;
-  accent-color: var(--dsw-alias-brand-primary);
-  cursor: pointer;
-}
-.dsh-todo-text {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 14px;
-  line-height: 1.45;
-  text-align: left;
-  overflow-wrap: anywhere;
-  cursor: pointer;
-}
-.dsh-todo-text:hover { color: var(--dsw-alias-brand-primary); }
-.dsh-todo-row[data-done="true"] .dsh-todo-text {
-  color: var(--dsw-alias-label-secondary);
-  text-decoration: line-through;
-  text-decoration-color: var(--dsw-alias-border-l2);
-}
-.dsh-todo-row[data-done="true"] .dsh-todo-text:hover {
-  color: var(--dsw-alias-label-primary);
-}
-.dsh-todo-group-tag {
-  flex: none;
-  max-width: 110px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-secondary);
-  font-size: 11px;
-}
-.dsh-todo-note {
-  flex: none;
-  display: grid;
-  place-items: center;
-  color: var(--dsw-alias-label-secondary);
-}
-.dsh-todo-due {
-  flex: none;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-secondary);
-  font-size: 11px;
-  white-space: nowrap;
-}
-.dsh-todo-due[data-state="overdue"] { color: var(--dsw-alias-state-error-primary); }
-.dsh-todo-due[data-state="today"] { color: var(--dsw-alias-brand-primary); }
-.dsh-todo-row[data-done="true"] .dsh-todo-due { color: var(--dsw-alias-label-secondary); }
-.dsh-todo-delete {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-.dsh-todo-row:hover .dsh-todo-delete,
-.dsh-todo-delete:focus-visible { opacity: 1; }
-.dsh-todo-delete:hover {
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-state-error-primary);
+@container (max-width: 700px) {
+  .dsh-todo-shell { padding: 28px 18px 96px; }
+  .dsh-todo-date { display: none; }
+  .dsh-todo-workspace { display: block; }
+  .dsh-todo-rail {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    min-height: 0;
+    margin-bottom: 22px;
+    padding: 10px 0;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--dsw-alias-border-l1);
+    background: var(--dsw-alias-bg-base);
+  }
+  .dsh-todo-rail-label { display: none; }
+  .dsh-todo-pagerail-item {
+    flex: 0 0 auto;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid var(--dsw-alias-border-l1);
+    border-radius: 99px;
+    background: var(--dsw-alias-bg-layer-1);
+  }
+  .dsh-todo-pagerail-item[data-active="true"] {
+    border-color: var(--dsw-alias-border-l2);
+  }
+  .dsh-todo-pagerail-item[data-active="true"]::before { display: none; }
+  .dsh-todo-pagerail-name { max-width: 140px; }
+  .dsh-todo-rail-rule { display: none; }
+  .dsh-todo-newpage {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 6px 10px;
+    border-radius: 99px;
+  }
+  .dsh-todo-pageform {
+    flex: 0 0 190px;
+    margin: 0;
+  }
+  .dsh-todo-pagehead-tools { justify-content: flex-start; }
+  .dsh-todo-composer-text { flex-basis: 100%; }
+  .dsh-todo-composer-add { margin-left: auto; }
 }
 @media (hover: none) {
   .dsh-todo-delete { opacity: 1; }
 }
-.dsh-todo-empty {
-  padding: 56px 24px;
-  border: 1px dashed var(--dsw-alias-border-l1);
-  border-radius: 12px;
-  text-align: center;
-}
-.dsh-todo-empty-title { font-size: 14px; font-weight: 500; }
-.dsh-todo-empty-hint {
-  margin-top: 6px;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 13px;
-}
-.dsh-todo-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgb(0 0 0 / 38%);
-}
-.dsh-todo-dialog {
-  width: min(520px, 100%);
-  max-height: calc(100vh - 48px);
-  overflow: auto;
-  padding: 18px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 14px;
-  background: var(--dsw-alias-bg-overlay);
-  box-shadow: 0 24px 64px rgb(0 0 0 / 32%);
-}
-.dsh-todo-dialog-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.dsh-todo-dialog-title { margin: 0; font-size: 16px; font-weight: 600; }
-.dsh-todo-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.dsh-todo-label { font-size: 12px; color: var(--dsw-alias-label-secondary); }
-.dsh-todo-control { width: 100%; height: 36px; font-size: 13px; }
-.dsh-todo-textarea {
-  min-height: 110px;
-  padding: 9px 10px;
-  resize: vertical;
-  line-height: 1.5;
-}
-.dsh-todo-daterow { display: flex; align-items: center; gap: 8px; }
-.dsh-todo-daterow .dsh-todo-control { flex: 1; }
-.dsh-todo-dialog-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 4px;
-}
-.dsh-todo-actions-right { display: flex; align-items: center; gap: 8px; }
-.dsh-todo-group-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 12px;
-  max-height: 300px;
-  overflow: auto;
-}
-.dsh-todo-group-row { display: flex; align-items: center; gap: 8px; }
-.dsh-todo-group-input {
-  flex: 1;
-  min-width: 0;
-  height: 34px;
-  padding: 0 10px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-primary);
-  font: inherit;
-  font-size: 13px;
-  outline: none;
-}
-.dsh-todo-group-input:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
-}
-.dsh-todo-group-count {
-  flex: none;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-.dsh-todo-group-confirm {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 8px;
-}
-.dsh-todo-group-confirm-text {
-  color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
-  line-height: 1.5;
-}
-.dsh-todo-group-confirm-actions { display: flex; justify-content: flex-end; gap: 6px; }
-.dsh-todo-group-empty {
-  padding: 18px 0;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
-}
-@media (max-width: 560px) {
-  .dsh-todo-shell { padding: 28px 16px 72px; }
-  .dsh-todo-input { flex: 1 1 100%; }
-  .dsh-todo-date { flex: 1; width: auto; }
-  .dsh-todo-addbtn { flex: 0 0 auto; }
+@media (prefers-reduced-motion: reduce) {
+  .dsh-todo-page * { transition: none !important; }
 }
 `;
 
-    let store = { groups: [], tasks: [] };
+    let store = { pages: [], groups: [], tasks: [] };
+    let notesStore = { notes: [] };
     const listeners = new Set();
 
     function emit() {
@@ -578,62 +1150,132 @@ window.__ModuleLoader__.load({
       return 'todo-' + Date.now() + '-' + Math.random().toString(36).slice(2);
     }
 
-    function sanitize(raw) {
-      const groups = [];
-      if (Array.isArray(raw && raw.groups)) {
-        const seen = new Set();
-        for (const group of raw.groups) {
-          if (!group || typeof group.id !== 'string' || !group.id) continue;
-          if (seen.has(group.id)) continue;
-          seen.add(group.id);
-          groups.push({ id: group.id, name: typeof group.name === 'string' && group.name.trim() ? group.name.trim() : 'Group' });
-        }
-      }
-      const groupIds = new Set(groups.map((group) => group.id));
+    function emptyPage() {
+      return { id: newId(), name: '' };
+    }
+
+    function freshStore() {
+      return { pages: [emptyPage()], groups: [], tasks: [] };
+    }
+
+    function normalizeName(value) {
+      return typeof value === 'string' ? value.trim() : '';
+    }
+
+    function isDateKey(value) {
+      return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+    }
+
+    function sanitizeTasks(rawTasks, pages, groups) {
+      const pageIds = new Set(pages.map((page) => page.id));
+      const groupPage = new Map(groups.map((group) => [group.id, group.pageId]));
+      const fallbackPage = pages[0].id;
       const tasks = [];
-      if (Array.isArray(raw && raw.tasks)) {
-        for (const task of raw.tasks) {
-          if (!task || typeof task.text !== 'string' || !task.text.trim()) continue;
-          tasks.push({
-            id: typeof task.id === 'string' && task.id ? task.id : newId(),
-            text: task.text,
-            notes: typeof task.notes === 'string' ? task.notes : '',
-            done: task.done === true,
-            createdAt: Number.isFinite(task.createdAt) ? task.createdAt : 0,
-            dueDate: typeof task.dueDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(task.dueDate) ? task.dueDate : null,
-            groupId: typeof task.groupId === 'string' && groupIds.has(task.groupId) ? task.groupId : null,
-          });
+      if (!Array.isArray(rawTasks)) return tasks;
+      for (const task of rawTasks) {
+        if (!task || typeof task.text !== 'string' || !task.text.trim()) continue;
+        const pageId = typeof task.pageId === 'string' && pageIds.has(task.pageId) ? task.pageId : fallbackPage;
+        const groupId =
+          typeof task.groupId === 'string' && groupPage.get(task.groupId) === pageId
+            ? task.groupId
+            : null;
+        tasks.push({
+          id: typeof task.id === 'string' && task.id ? task.id : newId(),
+          text: task.text,
+          notes: typeof task.notes === 'string' ? task.notes : '',
+          done: task.done === true,
+          createdAt: Number.isFinite(task.createdAt) ? task.createdAt : 0,
+          dueDate: isDateKey(task.dueDate) ? task.dueDate : null,
+          pageId,
+          groupId,
+        });
+      }
+      return tasks;
+    }
+
+    function sanitizeV3(raw) {
+      if (!raw || !Array.isArray(raw.pages)) return null;
+      const pages = [];
+      const pageIds = new Set();
+      for (const page of raw.pages) {
+        if (!page || typeof page.id !== 'string' || !page.id || pageIds.has(page.id)) continue;
+        pageIds.add(page.id);
+        pages.push({ id: page.id, name: normalizeName(page.name) });
+      }
+      if (pages.length === 0) return null;
+      const groups = [];
+      const groupIds = new Set();
+      if (Array.isArray(raw.groups)) {
+        for (const group of raw.groups) {
+          if (!group || typeof group.id !== 'string' || !group.id || groupIds.has(group.id)) continue;
+          if (typeof group.pageId !== 'string' || !pageIds.has(group.pageId)) continue;
+          const name = normalizeName(group.name);
+          if (!name) continue;
+          groupIds.add(group.id);
+          groups.push({ id: group.id, name, pageId: group.pageId });
         }
       }
-      return { groups, tasks };
+      return { pages, groups, tasks: sanitizeTasks(raw.tasks, pages, groups) };
+    }
+
+    function migrateV2(raw) {
+      if (!raw || !Array.isArray(raw.groups) || !Array.isArray(raw.tasks)) return null;
+      const page = emptyPage();
+      const pages = [page];
+      const groups = [];
+      const groupIds = new Set();
+      for (const group of raw.groups) {
+        if (!group || typeof group.id !== 'string' || !group.id || groupIds.has(group.id)) continue;
+        const name = normalizeName(group.name);
+        if (!name) continue;
+        groupIds.add(group.id);
+        groups.push({ id: group.id, name, pageId: page.id });
+      }
+      return { pages, groups, tasks: sanitizeTasks(raw.tasks, pages, groups) };
+    }
+
+    function migrateV1(raw) {
+      if (!Array.isArray(raw)) return null;
+      const page = emptyPage();
+      const pages = [page];
+      const tasks = [];
+      raw.forEach((item, index) => {
+        if (!item || typeof item.text !== 'string' || !item.text.trim()) return;
+        tasks.push({
+          id: typeof item.id === 'string' && item.id ? item.id : 'todo-legacy-' + index,
+          text: item.text,
+          notes: '',
+          done: item.done === true,
+          createdAt: Number.isFinite(item.createdAt) ? item.createdAt : 0,
+          dueDate: null,
+          pageId: page.id,
+          groupId: null,
+        });
+      });
+      return { pages, groups: [], tasks };
     }
 
     function loadStore() {
       try {
-        const rawV2 = window.localStorage.getItem(STORAGE_KEY);
-        if (rawV2) return sanitize(JSON.parse(rawV2));
-        const rawV1 = window.localStorage.getItem(LEGACY_KEY);
+        const rawV3 = window.localStorage.getItem(STORAGE_KEY);
+        if (rawV3) {
+          const parsed = sanitizeV3(JSON.parse(rawV3));
+          return parsed || freshStore();
+        }
+        const rawV2 = window.localStorage.getItem(LEGACY_V2);
+        if (rawV2) {
+          const migrated = migrateV2(JSON.parse(rawV2));
+          if (migrated) return migrated;
+        }
+        const rawV1 = window.localStorage.getItem(LEGACY_V1);
         if (rawV1) {
-          const legacy = JSON.parse(rawV1);
-          if (Array.isArray(legacy)) {
-            return sanitize({
-              groups: [],
-              tasks: legacy.map((item, index) => ({
-                id: item && typeof item.id === 'string' ? item.id : 'todo-legacy-' + index,
-                text: item && typeof item.text === 'string' ? item.text : '',
-                notes: '',
-                done: Boolean(item && item.done),
-                createdAt: item && Number.isFinite(item.createdAt) ? item.createdAt : 0,
-                dueDate: null,
-                groupId: null,
-              })),
-            });
-          }
+          const migrated = migrateV1(JSON.parse(rawV1));
+          if (migrated) return migrated;
         }
       } catch {
-        // A corrupt store falls back to an empty list.
+        // A corrupt store falls back to a fresh page.
       }
-      return { groups: [], tasks: [] };
+      return freshStore();
     }
 
     function saveStore() {
@@ -650,52 +1292,41 @@ window.__ModuleLoader__.load({
       emit();
     }
 
-    function addTask({ text, dueDate, groupId }) {
-      const value = text.trim();
-      if (!value) return;
+    function addPage(name) {
+      const page = { id: newId(), name: normalizeName(name) };
+      commit({ ...store, pages: [...store.pages, page] });
+      return page.id;
+    }
+
+    function renamePage(id, name) {
       commit({
         ...store,
-        tasks: [
-          {
-            id: newId(),
-            text: value,
-            notes: '',
-            done: false,
-            createdAt: Date.now(),
-            dueDate: dueDate || null,
-            groupId: groupId || null,
-          },
-          ...store.tasks,
-        ],
+        pages: store.pages.map((page) =>
+          page.id === id ? { ...page, name: normalizeName(name) } : page,
+        ),
       });
     }
 
-    function patchTask(id, patch) {
+    function deletePage(id) {
+      if (store.pages.length <= 1) return;
       commit({
-        ...store,
-        tasks: store.tasks.map((task) => (task.id === id ? { ...task, ...patch } : task)),
+        pages: store.pages.filter((page) => page.id !== id),
+        groups: store.groups.filter((group) => group.pageId !== id),
+        tasks: store.tasks.filter((task) => task.pageId !== id),
       });
     }
 
-    function toggleTask(id) {
+    function addGroup(pageId, name) {
+      const value = normalizeName(name);
+      if (!value || !store.pages.some((page) => page.id === pageId)) return;
       commit({
         ...store,
-        tasks: store.tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task)),
+        groups: [...store.groups, { id: newId(), name: value, pageId }],
       });
-    }
-
-    function removeTask(id) {
-      commit({ ...store, tasks: store.tasks.filter((task) => task.id !== id) });
-    }
-
-    function addGroup(name) {
-      const value = name.trim();
-      if (!value) return;
-      commit({ ...store, groups: [...store.groups, { id: newId(), name: value }] });
     }
 
     function renameGroup(id, name) {
-      const value = name.trim();
+      const value = normalizeName(name);
       if (!value) return;
       commit({
         ...store,
@@ -711,11 +1342,210 @@ window.__ModuleLoader__.load({
       });
     }
 
-    function clearCompleted(shouldClear) {
+    function addTask({ pageId, groupId, text, dueDate }) {
+      const value = typeof text === 'string' ? text.trim() : '';
+      if (!value) return;
+      if (!store.pages.some((page) => page.id === pageId)) return;
+      const group = groupId ? store.groups.find((item) => item.id === groupId) : null;
+      const nextGroupId = group && group.pageId === pageId ? group.id : null;
       commit({
         ...store,
-        tasks: store.tasks.filter((task) => !(task.done && shouldClear(task))),
+        tasks: [
+          {
+            id: newId(),
+            text: value,
+            notes: '',
+            done: false,
+            createdAt: Date.now(),
+            dueDate: dueDate || null,
+            pageId,
+            groupId: nextGroupId,
+          },
+          ...store.tasks,
+        ],
       });
+    }
+
+    function patchTask(id, patch) {
+      commit({
+        ...store,
+        tasks: store.tasks.map((task) => {
+          if (task.id !== id) return task;
+          const next = { ...task, ...patch };
+          if (next.groupId) {
+            const group = store.groups.find((item) => item.id === next.groupId);
+            if (!group || group.pageId !== next.pageId) next.groupId = null;
+          }
+          return next;
+        }),
+      });
+    }
+
+    function toggleTask(id) {
+      commit({
+        ...store,
+        tasks: store.tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task)),
+      });
+    }
+
+    function removeTask(id) {
+      commit({ ...store, tasks: store.tasks.filter((task) => task.id !== id) });
+    }
+
+    function clearCompleted(pageId) {
+      commit({
+        ...store,
+        tasks: store.tasks.filter((task) => !(task.pageId === pageId && task.done)),
+      });
+    }
+
+    const NOTE_TAGS = new Set([
+      'P',
+      'DIV',
+      'BR',
+      'B',
+      'STRONG',
+      'I',
+      'EM',
+      'U',
+      'S',
+      'UL',
+      'OL',
+      'LI',
+      'BLOCKQUOTE',
+      'CODE',
+      'PRE',
+      'A',
+      'IMG',
+      'H1',
+      'H2',
+      'H3',
+    ]);
+
+    function sanitizeNoteHtml(html) {
+      if (typeof html !== 'string') return '';
+      if (typeof document === 'undefined') return html;
+      const template = document.createElement('template');
+      template.innerHTML = html;
+
+      function cleanChildren(parent) {
+        for (const node of Array.from(parent.childNodes)) {
+          if (node.nodeType === 3) continue;
+          if (node.nodeType !== 1) {
+            node.remove();
+            continue;
+          }
+          const tag = node.tagName;
+          if (!NOTE_TAGS.has(tag)) {
+            cleanChildren(node);
+            const fragment = document.createDocumentFragment();
+            while (node.firstChild) fragment.appendChild(node.firstChild);
+            node.replaceWith(fragment);
+            continue;
+          }
+          for (const attribute of Array.from(node.attributes)) {
+            const name = attribute.name.toLowerCase();
+            if (tag === 'A' && name === 'href') {
+              if (!/^(https?:|mailto:)/i.test(attribute.value)) {
+                node.removeAttribute(name);
+              } else {
+                node.setAttribute('target', '_blank');
+                node.setAttribute('rel', 'noopener noreferrer');
+              }
+              continue;
+            }
+            if (tag === 'IMG' && name === 'src') {
+              if (!/^data:image\/(png|jpe?g|webp|gif);base64,/i.test(attribute.value)) {
+                node.removeAttribute(name);
+              }
+              continue;
+            }
+            if (tag === 'IMG' && name === 'alt') continue;
+            node.removeAttribute(name);
+          }
+          if (tag === 'IMG' && !node.getAttribute('src')) {
+            node.remove();
+            continue;
+          }
+          cleanChildren(node);
+        }
+      }
+
+      cleanChildren(template.content);
+      return template.innerHTML;
+    }
+
+    function sanitizeNote(raw) {
+      if (!raw || typeof raw.id !== 'string' || !raw.id) return null;
+      return {
+        id: raw.id,
+        title: normalizeName(raw.title),
+        html: sanitizeNoteHtml(raw.html),
+        createdAt: Number.isFinite(raw.createdAt) ? raw.createdAt : 0,
+        updatedAt: Number.isFinite(raw.updatedAt) ? raw.updatedAt : 0,
+      };
+    }
+
+    function loadNotes() {
+      try {
+        const raw = window.localStorage.getItem(NOTES_KEY);
+        if (!raw) return { notes: [] };
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.notes)) return { notes: [] };
+        const notes = [];
+        const ids = new Set();
+        for (const item of parsed.notes) {
+          const note = sanitizeNote(item);
+          if (!note || ids.has(note.id)) continue;
+          ids.add(note.id);
+          notes.push(note);
+        }
+        return { notes };
+      } catch {
+        return { notes: [] };
+      }
+    }
+
+    function saveNotes() {
+      try {
+        window.localStorage.setItem(NOTES_KEY, JSON.stringify(notesStore));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function commitNotes(next) {
+      notesStore = next;
+      const saved = saveNotes();
+      emit();
+      return saved;
+    }
+
+    function addNote() {
+      const now = Date.now();
+      const note = { id: newId(), title: '', html: '', createdAt: now, updatedAt: now };
+      commitNotes({ notes: [note, ...notesStore.notes] });
+      return note.id;
+    }
+
+    function patchNote(id, patch) {
+      let found = false;
+      const notes = notesStore.notes.map((note) => {
+        if (note.id !== id) return note;
+        found = true;
+        const next = { ...note };
+        if (Object.prototype.hasOwnProperty.call(patch, 'title')) next.title = normalizeName(patch.title);
+        if (Object.prototype.hasOwnProperty.call(patch, 'html')) next.html = sanitizeNoteHtml(patch.html);
+        next.updatedAt = Date.now();
+        return next;
+      });
+      if (!found) return false;
+      return commitNotes({ notes });
+    }
+
+    function removeNote(id) {
+      commitNotes({ notes: notesStore.notes.filter((note) => note.id !== id) });
     }
 
     function pad2(value) {
@@ -758,6 +1588,31 @@ window.__ModuleLoader__.load({
       }
     }
 
+    function formatStamp(lang) {
+      try {
+        return new Intl.DateTimeFormat(lang, {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+        }).format(new Date());
+      } catch {
+        return '';
+      }
+    }
+
+    function formatNoteStamp(ts, lang) {
+      if (!ts) return '';
+      try {
+        const date = new Date(ts);
+        if (toDateKey(date) === todayKey()) {
+          return new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit' }).format(date);
+        }
+        return new Intl.DateTimeFormat(lang, { month: 'short', day: 'numeric' }).format(date);
+      } catch {
+        return '';
+      }
+    }
+
     function useStore() {
       const [, force] = React.useState(0);
       React.useEffect(() => {
@@ -770,12 +1625,21 @@ window.__ModuleLoader__.load({
       return store;
     }
 
+    function useNotesStore() {
+      const [, force] = React.useState(0);
+      React.useEffect(() => {
+        const listener = () => force((n) => n + 1);
+        listeners.add(listener);
+        return () => {
+          listeners.delete(listener);
+        };
+      }, []);
+      return notesStore;
+    }
+
     function useLocaleTick(locale) {
       const [, force] = React.useState(0);
-      React.useEffect(
-        () => locale.subscribe(() => force((n) => n + 1)),
-        [locale],
-      );
+      React.useEffect(() => locale.subscribe(() => force((n) => n + 1)), [locale]);
     }
 
     function PlusIcon({ size = 14 }) {
@@ -802,15 +1666,6 @@ window.__ModuleLoader__.load({
       );
     }
 
-    function PencilIcon({ size = 13 }) {
-      return h(
-        'svg',
-        { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
-        h('path', { d: 'M4 20h4L18.5 9.5a2.8 2.8 0 0 0-4-4L4 16v4z' }),
-        h('path', { d: 'M13.5 6.5l4 4' }),
-      );
-    }
-
     function NoteIcon({ size = 13 }) {
       return h(
         'svg',
@@ -819,12 +1674,22 @@ window.__ModuleLoader__.load({
       );
     }
 
-    function CalendarIcon({ size = 13 }) {
+    function CalendarIcon({ size = 12 }) {
+      return h(
+        'svg',
+        { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
+        h('rect', { x: 3.5, y: 5, width: 17, height: 15, rx: 2.5 }),
+        h('path', { d: 'M8 3.5v3M16 3.5v3M3.5 10h17' }),
+      );
+    }
+
+    function ImageIcon({ size = 13 }) {
       return h(
         'svg',
         { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
-        h('rect', { x: 3.5, y: 5, width: 17, height: 15, rx: 2.5 }),
-        h('path', { d: 'M8 3.5v3M16 3.5v3M3.5 10h17' }),
+        h('rect', { x: 3.5, y: 4.5, width: 17, height: 15, rx: 2.5 }),
+        h('circle', { cx: 8.5, cy: 9.5, r: 1.4 }),
+        h('path', { d: 'M4.5 17l4.7-4.7 3.2 3.2 2.1-2.1 5 5' }),
       );
     }
 
@@ -862,63 +1727,13 @@ window.__ModuleLoader__.load({
       );
     }
 
-    function TaskRow({ task, groupName, onOpen, onToggle, onRemove, t, lang }) {
-      const state = dueState(task);
-      const dueText =
-        state === 'today'
-          ? t('dueToday')
-          : state === 'tomorrow'
-            ? t('dueTomorrow')
-            : formatDueDate(task.dueDate, lang);
-      return h(
-        'li',
-        { className: 'dsh-todo-row', 'data-done': task.done ? 'true' : 'false' },
-        h('input', {
-          type: 'checkbox',
-          className: 'dsh-todo-check',
-          checked: task.done,
-          onClick: (event) => event.stopPropagation(),
-          onChange: () => onToggle(task.id),
-          'aria-label': task.done ? t('markActive') : t('markDone'),
-        }),
-        h(
-          'button',
-          {
-            type: 'button',
-            className: 'dsh-todo-text',
-            onClick: onOpen,
-            title: t('openTask'),
-            'aria-haspopup': 'dialog',
-          },
-          task.text,
-        ),
-        groupName ? h('span', { className: 'dsh-todo-group-tag' }, groupName) : null,
-        task.notes.trim()
-          ? h('span', { className: 'dsh-todo-note', title: t('hasDetails'), 'aria-label': t('hasDetails') }, h(NoteIcon))
-          : null,
-        task.dueDate ? h('span', { className: 'dsh-todo-due', 'data-state': state, title: task.dueDate }, dueText) : null,
-        h(
-          'button',
-          {
-            type: 'button',
-            className: 'dsh-todo-delete',
-            onClick: (event) => {
-              event.stopPropagation();
-              onRemove(task.id);
-            },
-            'aria-label': t('deleteTask'),
-            title: t('deleteTask'),
-          },
-          h(TrashIcon),
-        ),
-      );
-    }
-
     return {
       inject: ['slots', 'locale'],
       apply(ctx) {
         store = loadStore();
         saveStore();
+        notesStore = loadNotes();
+        saveNotes();
         const t = ctx.locale.bind(NS);
 
         ctx.effect(() => {
@@ -932,16 +1747,668 @@ window.__ModuleLoader__.load({
 
         ctx.effect(() => {
           const onStorage = (event) => {
-            if (event.key !== null && event.key !== STORAGE_KEY) return;
+            if (event.key !== null && event.key !== STORAGE_KEY && event.key !== NOTES_KEY) return;
             store = loadStore();
+            notesStore = loadNotes();
             emit();
           };
           window.addEventListener('storage', onStorage);
           return () => window.removeEventListener('storage', onStorage);
         }, 'dsh-todo: cross-tab sync');
 
-        function TaskDialog({ task, groups, onClose }) {
-          useLocaleTick(ctx.locale);
+        function TaskRow({ task, onOpen, onToggle, onRemove, t, lang }) {
+          const state = dueState(task);
+          const dueText =
+            state === 'today'
+              ? t('dueToday')
+              : state === 'tomorrow'
+                ? t('dueTomorrow')
+                : formatDueDate(task.dueDate, lang);
+          return h(
+            'li',
+            { className: 'dsh-todo-row', 'data-done': task.done ? 'true' : 'false' },
+            h('input', {
+              type: 'checkbox',
+              className: 'dsh-todo-check',
+              checked: task.done,
+              onClick: (event) => event.stopPropagation(),
+              onChange: () => onToggle(task.id),
+              'aria-label': task.done ? t('markActive') : t('markDone'),
+            }),
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'dsh-todo-text',
+                onClick: onOpen,
+                title: t('openTask'),
+                'aria-haspopup': 'dialog',
+              },
+              task.text,
+            ),
+            task.notes.trim()
+              ? h('span', { className: 'dsh-todo-note', title: t('hasDetails'), 'aria-label': t('hasDetails') }, h(NoteIcon))
+              : null,
+            task.dueDate
+              ? h(
+                  'span',
+                  { className: 'dsh-todo-due', 'data-state': state, title: task.dueDate },
+                  h(CalendarIcon),
+                  dueText,
+                )
+              : null,
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'dsh-todo-delete',
+                onClick: (event) => {
+                  event.stopPropagation();
+                  onRemove(task.id);
+                },
+                'aria-label': t('deleteTask'),
+                title: t('deleteTask'),
+              },
+              h(TrashIcon),
+            ),
+          );
+        }
+
+        function Masthead({ view, onView, t, lang }) {
+          const tabs = [
+            ['tasks', t('viewTasks')],
+            ['notes', t('viewNotes')],
+          ];
+          return h(
+            'header',
+            { className: 'dsh-todo-masthead' },
+            h('div', { className: 'dsh-todo-wordmark' }, 'TO DO'),
+            h(
+              'div',
+              { className: 'dsh-todo-masthead-right' },
+              h(
+                'div',
+                { className: 'dsh-todo-viewtabs', role: 'tablist', 'aria-label': t('viewsLabel') },
+                tabs.map(([id, label]) =>
+                  h(
+                    'button',
+                    {
+                      key: id,
+                      type: 'button',
+                      role: 'tab',
+                      'aria-selected': view === id,
+                      onClick: () => onView(id),
+                    },
+                    label,
+                  ),
+                ),
+              ),
+              h('div', { className: 'dsh-todo-date' }, formatStamp(lang)),
+            ),
+          );
+        }
+
+        function PageRail({ pages, stats, activeId, onSelect, onCreate, t }) {
+          const [creating, setCreating] = React.useState(false);
+          const [draft, setDraft] = React.useState('');
+
+          function submit(event) {
+            event.preventDefault();
+            if (!draft.trim()) return;
+            onCreate(draft);
+            setDraft('');
+            setCreating(false);
+          }
+
+          function cancel() {
+            setDraft('');
+            setCreating(false);
+          }
+
+          return h(
+            'nav',
+            { className: 'dsh-todo-rail', 'aria-label': t('pages') },
+            h('div', { className: 'dsh-todo-rail-label' }, t('pages')),
+            pages.map((page) => {
+              const item = stats.get(page.id) || { open: 0, done: 0, total: 0 };
+              const label = page.name || t('defaultPageName');
+              const ratio = item.total > 0 ? Math.round((item.done / item.total) * 100) : 0;
+              return h(
+                'button',
+                {
+                  key: page.id,
+                  type: 'button',
+                  className: 'dsh-todo-pagerail-item',
+                  'data-active': page.id === activeId,
+                  'aria-current': page.id === activeId ? 'page' : undefined,
+                  onClick: () => onSelect(page.id),
+                  title: label,
+                },
+                h(
+                  'span',
+                  { className: 'dsh-todo-pagerail-top' },
+                  h('span', { className: 'dsh-todo-pagerail-name' }, label),
+                  item.open > 0
+                    ? h('span', { className: 'dsh-todo-pagerail-count' }, String(item.open))
+                    : null,
+                ),
+                h('span', { className: 'dsh-todo-rail-rule' }, h('span', { style: { width: ratio + '%' } })),
+              );
+            }),
+            creating
+              ? h(
+                  'form',
+                  { className: 'dsh-todo-pageform', onSubmit: submit },
+                  h('input', {
+                    value: draft,
+                    onChange: (event) => setDraft(event.target.value),
+                    onKeyDown: (event) => {
+                      if (event.key === 'Escape') {
+                        event.stopPropagation();
+                        cancel();
+                      }
+                    },
+                    placeholder: t('pageName'),
+                    'aria-label': t('pageName'),
+                    autoFocus: true,
+                    autoComplete: 'off',
+                  }),
+                  h(
+                    'div',
+                    { className: 'dsh-todo-form-actions' },
+                    h('button', { type: 'button', className: 'dsh-todo-mini', onClick: cancel }, t('cancel')),
+                    h('button', { type: 'submit', className: 'dsh-todo-mini dsh-todo-mini-primary', disabled: !draft.trim() }, t('add')),
+                  ),
+                )
+              : h(
+                  'button',
+                  { type: 'button', className: 'dsh-todo-newpage', onClick: () => setCreating(true) },
+                  h(PlusIcon, { size: 13 }),
+                  t('newPage'),
+                ),
+          );
+        }
+
+        function readImageFile(file) {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+          });
+        }
+
+        function loadImageElement(src) {
+          return new Promise((resolve) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => resolve(null);
+            image.src = src;
+          });
+        }
+
+        async function compressImageFile(file) {
+          if (!file || !/^image\/(png|jpe?g|webp|gif)$/i.test(file.type || '')) return null;
+          const source = await readImageFile(file);
+          if (!source) return null;
+          const image = await loadImageElement(source);
+          if (!image) return source;
+          const max = 1400;
+          const scale = Math.min(1, max / Math.max(image.width, image.height));
+          if (scale === 1 && file.size <= 400000) return source;
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+          const context = canvas.getContext('2d');
+          if (!context) return source;
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          let output = canvas.toDataURL('image/webp', 0.82);
+          if (!/^data:image\/webp/i.test(output)) output = canvas.toDataURL('image/jpeg', 0.84);
+          return output && output.length < source.length ? output : source;
+        }
+
+        function caretRangeAt(x, y) {
+          if (typeof document === 'undefined') return null;
+          if (typeof document.caretRangeFromPoint === 'function') {
+            return document.caretRangeFromPoint(x, y);
+          }
+          if (typeof document.caretPositionFromPoint === 'function') {
+            const position = document.caretPositionFromPoint(x, y);
+            if (position) {
+              const range = document.createRange();
+              range.setStart(position.offsetNode, position.offset);
+              range.collapse(true);
+              return range;
+            }
+          }
+          return null;
+        }
+
+        function insertImageAtRange(editor, range, src, alt) {
+          if (!editor) return;
+          editor.focus();
+          let target = range;
+          if (!target || !editor.contains(target.startContainer)) {
+            target = document.createRange();
+            target.selectNodeContents(editor);
+            target.collapse(false);
+          }
+          const image = document.createElement('img');
+          image.src = src;
+          image.alt = alt || '';
+          target.deleteContents();
+          target.insertNode(image);
+          const after = document.createRange();
+          after.setStartAfter(image);
+          after.collapse(true);
+          const selection = window.getSelection();
+          if (selection) {
+            selection.removeAllRanges();
+            selection.addRange(after);
+          }
+        }
+
+        function NoteRail({ notes, activeId, onSelect, onCreate, t, lang }) {
+          return h(
+            'nav',
+            { className: 'dsh-todo-rail', 'aria-label': t('notes') },
+            h('div', { className: 'dsh-todo-rail-label' }, t('notes')),
+            notes.map((note) => {
+              const label = note.title || t('untitledNote');
+              return h(
+                'button',
+                {
+                  key: note.id,
+                  type: 'button',
+                  className: 'dsh-todo-pagerail-item',
+                  'data-active': note.id === activeId,
+                  'aria-current': note.id === activeId ? 'page' : undefined,
+                  onClick: () => onSelect(note.id),
+                  title: label,
+                },
+                h(
+                  'span',
+                  { className: 'dsh-todo-pagerail-top' },
+                  h('span', { className: 'dsh-todo-pagerail-name' }, label),
+                ),
+                h('span', { className: 'dsh-todo-pagerail-date' }, formatNoteStamp(note.updatedAt, lang)),
+              );
+            }),
+            h(
+              'button',
+              { type: 'button', className: 'dsh-todo-newpage', onClick: onCreate },
+              h(PlusIcon, { size: 13 }),
+              t('newNote'),
+            ),
+          );
+        }
+
+        function NoteEditor({ note, onPatch, onDelete, t, lang }) {
+          const [title, setTitle] = React.useState(note.title);
+          const [dragging, setDragging] = React.useState(false);
+          const [error, setError] = React.useState(false);
+          const [confirming, setConfirming] = React.useState(false);
+          const bodyRef = React.useRef(null);
+          const titleRef = React.useRef(note.title);
+          const titleTimer = React.useRef(null);
+          const bodyTimer = React.useRef(null);
+          const initialHtml = React.useRef(note.html);
+
+          React.useEffect(() => {
+            setTitle(note.title);
+            titleRef.current = note.title;
+          }, [note.id]);
+
+          React.useEffect(
+            () => () => {
+              if (titleTimer.current) {
+                clearTimeout(titleTimer.current);
+                onPatch(note.id, { title: titleRef.current });
+              }
+              if (bodyTimer.current) {
+                clearTimeout(bodyTimer.current);
+                if (bodyRef.current) onPatch(note.id, { html: bodyRef.current.innerHTML });
+              }
+            },
+            [],
+          );
+
+          function saveTitle() {
+            if (titleTimer.current) {
+              clearTimeout(titleTimer.current);
+              titleTimer.current = null;
+            }
+            const saved = onPatch(note.id, { title: titleRef.current });
+            setError(!saved);
+          }
+
+          function saveBody() {
+            if (bodyTimer.current) {
+              clearTimeout(bodyTimer.current);
+              bodyTimer.current = null;
+            }
+            if (!bodyRef.current) return;
+            const saved = onPatch(note.id, { html: bodyRef.current.innerHTML });
+            setError(!saved);
+          }
+
+          function changeTitle(event) {
+            const value = event.target.value;
+            titleRef.current = value;
+            setTitle(value);
+            if (titleTimer.current) clearTimeout(titleTimer.current);
+            titleTimer.current = setTimeout(saveTitle, 450);
+          }
+
+          function changeBody() {
+            if (bodyTimer.current) clearTimeout(bodyTimer.current);
+            bodyTimer.current = setTimeout(saveBody, 500);
+          }
+
+          async function addImageFiles(files, range) {
+            const images = (files || []).filter((file) => /^image\/(png|jpe?g|webp|gif)$/i.test(file.type || ''));
+            if (images.length === 0) return;
+            const sources = [];
+            for (const file of images) {
+              const source = await compressImageFile(file);
+              if (source) sources.push(source);
+            }
+            for (const source of sources) {
+              insertImageAtRange(bodyRef.current, range, source, t('noteImageAlt'));
+            }
+            if (sources.length > 0) saveBody();
+          }
+
+          function handleDrop(event) {
+            event.preventDefault();
+            setDragging(false);
+            if (!event.dataTransfer) return;
+            const range = caretRangeAt(event.clientX, event.clientY);
+            addImageFiles(Array.from(event.dataTransfer.files || []), range);
+          }
+
+          function handlePaste(event) {
+            const files = Array.from((event.clipboardData && event.clipboardData.files) || []);
+            const hasImage = files.some((file) => /^image\//i.test(file.type || ''));
+            if (!hasImage) {
+              const html =
+                event.clipboardData && typeof event.clipboardData.getData === 'function'
+                  ? event.clipboardData.getData('text/html')
+                  : '';
+              if (!html) return;
+              event.preventDefault();
+              const clean = sanitizeNoteHtml(html);
+              if (typeof document !== 'undefined' && typeof document.execCommand === 'function') {
+                document.execCommand('insertHTML', false, clean);
+              }
+              changeBody();
+              return;
+            }
+            event.preventDefault();
+            let range = null;
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount > 0) {
+              const candidate = selection.getRangeAt(0);
+              if (bodyRef.current && bodyRef.current.contains(candidate.startContainer)) range = candidate;
+            }
+            addImageFiles(files, range);
+          }
+
+          const stamp = formatNoteStamp(note.updatedAt, lang);
+          return h(
+            'div',
+            null,
+            h(
+              'header',
+              { className: 'dsh-todo-pagehead' },
+              h(
+                'div',
+                { className: 'dsh-todo-pagehead-main' },
+                h('input', {
+                  className: 'dsh-todo-titleinput',
+                  value: title,
+                  onChange: changeTitle,
+                  onBlur: saveTitle,
+                  onKeyDown: (event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  },
+                  placeholder: t('noteTitle'),
+                  'aria-label': t('noteTitle'),
+                  autoFocus: !note.title,
+                  spellCheck: false,
+                }),
+                stamp ? h('div', { className: 'dsh-todo-note-meta' }, t('edited').replace('{date}', stamp)) : null,
+              ),
+              h(
+                'div',
+                { className: 'dsh-todo-pagehead-tools' },
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'dsh-todo-page-delete',
+                    onClick: () => setConfirming(true),
+                    'aria-label': t('deleteNote'),
+                    title: t('deleteNote'),
+                  },
+                  h(TrashIcon),
+                ),
+              ),
+            ),
+            h('div', {
+              className: 'dsh-todo-note-body' + (dragging ? ' is-dragging' : ''),
+              contentEditable: true,
+              suppressContentEditableWarning: true,
+              ref: bodyRef,
+              'data-placeholder': t('noteBodyPlaceholder'),
+              'aria-label': t('noteBodyPlaceholder'),
+              dangerouslySetInnerHTML: { __html: initialHtml.current },
+              onInput: changeBody,
+              onBlur: saveBody,
+              onDragEnter: (event) => {
+                event.preventDefault();
+                setDragging(true);
+              },
+              onDragOver: (event) => {
+                event.preventDefault();
+                setDragging(true);
+              },
+              onDragLeave: (event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setDragging(false);
+              },
+              onDrop: handleDrop,
+              onPaste: handlePaste,
+            }),
+            h('div', { className: 'dsh-todo-note-hint' }, h(ImageIcon), t('noteHint')),
+            error ? h('div', { className: 'dsh-todo-note-error' }, t('noteSaveError')) : null,
+            confirming
+              ? h(ConfirmDialog, {
+                  title: t('deleteNote'),
+                  message: t('deleteNoteWarning').replace('{name}', title || t('untitledNote')),
+                  confirmLabel: t('deleteNote'),
+                  onConfirm: () => {
+                    setConfirming(false);
+                    onDelete(note.id);
+                  },
+                  onClose: () => setConfirming(false),
+                  t,
+                })
+              : null,
+          );
+        }
+
+        function NotesView({ notes, activeId, onSelect, onCreate, onPatch, onDelete, t, lang }) {
+          const activeNote = notes.find((note) => note.id === activeId);
+          return h(
+            'div',
+            { className: 'dsh-todo-workspace' },
+            h(NoteRail, { notes, activeId, onSelect, onCreate, t, lang }),
+            h(
+              'div',
+              { className: 'dsh-todo-content' },
+              activeNote
+                ? h(NoteEditor, {
+                    key: activeNote.id,
+                    note: activeNote,
+                    onPatch,
+                    onDelete,
+                    t,
+                    lang,
+                  })
+                : h(
+                    'div',
+                    { className: 'dsh-todo-empty' },
+                    h('div', { className: 'dsh-todo-empty-title' }, t('noteEmptyTitle')),
+                    h('div', { className: 'dsh-todo-empty-hint' }, t('noteEmptyHint')),
+                    h(
+                      'button',
+                      { type: 'button', className: 'dsh-todo-primary', onClick: onCreate },
+                      h(PlusIcon),
+                      t('newNote'),
+                    ),
+                  ),
+            ),
+          );
+        }
+
+        function PageTitle({ page, onRename, t }) {
+          const [name, setName] = React.useState(page.name);
+
+          React.useEffect(() => {
+            setName(page.name);
+          }, [page.id, page.name]);
+
+          function commit() {
+            const value = name.trim();
+            if (!value) {
+              setName(page.name);
+              return;
+            }
+            if (value !== page.name) onRename(value);
+          }
+
+          return h('input', {
+            className: 'dsh-todo-titleinput',
+            value: name,
+            onChange: (event) => setName(event.target.value),
+            onBlur: commit,
+            onKeyDown: (event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                event.currentTarget.blur();
+              } else if (event.key === 'Escape') {
+                event.stopPropagation();
+                setName(page.name);
+                event.currentTarget.blur();
+              }
+            },
+            placeholder: t('defaultPageName'),
+            'aria-label': t('pageName'),
+            spellCheck: false,
+          });
+        }
+
+        function GroupHeader({ group, count, onRename, onDelete, t }) {
+          const [name, setName] = React.useState(group.name);
+
+          React.useEffect(() => {
+            setName(group.name);
+          }, [group.id, group.name]);
+
+          function commit() {
+            const value = name.trim();
+            if (value && value !== group.name) {
+              onRename(group.id, value);
+            } else {
+              setName(group.name);
+            }
+          }
+
+          return h(
+            'div',
+            { className: 'dsh-todo-group-head' },
+            h('input', {
+              className: 'dsh-todo-group-name',
+              value: name,
+              onChange: (event) => setName(event.target.value),
+              onBlur: commit,
+              onKeyDown: (event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  event.currentTarget.blur();
+                } else if (event.key === 'Escape') {
+                  event.stopPropagation();
+                  setName(group.name);
+                  event.currentTarget.blur();
+                }
+              },
+              placeholder: t('groupName'),
+              'aria-label': t('groupName'),
+              title: t('groupName'),
+              spellCheck: false,
+            }),
+            count > 0 ? h('span', { className: 'dsh-todo-group-count' }, String(count)) : null,
+            h(
+              'div',
+              { className: 'dsh-todo-group-actions' },
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'dsh-todo-iconbtn',
+                  onClick: () => onDelete(group.id),
+                  'aria-label': t('deleteGroup'),
+                  title: t('deleteGroup'),
+                },
+                h(TrashIcon),
+              ),
+            ),
+          );
+        }
+
+        function ConfirmDialog({ title, message, confirmLabel, onConfirm, onClose, t }) {
+          return h(
+            'div',
+            {
+              className: 'dsh-todo-backdrop',
+              onMouseDown: (event) => {
+                if (event.target === event.currentTarget) onClose();
+              },
+              onKeyDown: (event) => {
+                if (event.key === 'Escape') {
+                  event.stopPropagation();
+                  onClose();
+                }
+              },
+            },
+            h(
+              'div',
+              { className: 'dsh-todo-dialog', role: 'alertdialog', 'aria-modal': 'true', 'aria-label': title },
+              h(
+                'div',
+                { className: 'dsh-todo-dialog-head' },
+                h('h2', { className: 'dsh-todo-dialog-title' }, title),
+                h(
+                  'button',
+                  { type: 'button', className: 'dsh-todo-iconbtn', onClick: onClose, 'aria-label': t('close'), title: t('close') },
+                  h(XIcon),
+                ),
+              ),
+              h('p', { className: 'dsh-todo-confirm-text' }, message),
+              h(
+                'div',
+                { className: 'dsh-todo-confirm-actions' },
+                h('button', { type: 'button', className: 'dsh-todo-ghost', onClick: onClose, autoFocus: true }, t('cancel')),
+                h('button', { type: 'button', className: 'dsh-todo-danger', onClick: onConfirm }, confirmLabel),
+              ),
+            ),
+          );
+        }
+
+        function TaskDialog({ task, groups, onClose, t, lang }) {
           const [title, setTitle] = React.useState(task.text);
           const [notes, setNotes] = React.useState(task.notes);
           const [dueDate, setDueDate] = React.useState(task.dueDate || '');
@@ -1083,7 +2550,12 @@ window.__ModuleLoader__.load({
                   h('button', { type: 'button', className: 'dsh-todo-ghost', onClick: onClose }, t('cancel')),
                   h(
                     'button',
-                    { type: 'button', className: 'dsh-todo-primary dsh-todo-small', disabled: !canSave, onClick: save },
+                    {
+                      type: 'button',
+                      className: 'dsh-todo-primary',
+                      disabled: !canSave,
+                      onClick: save,
+                    },
                     h(CheckIcon),
                     t('save'),
                   ),
@@ -1093,313 +2565,139 @@ window.__ModuleLoader__.load({
           );
         }
 
-        function GroupRow({ group, taskCount, onDelete }) {
-          const [name, setName] = React.useState(group.name);
-
-          React.useEffect(() => {
-            setName(group.name);
-          }, [group.name]);
-
-          function commitName() {
-            const value = name.trim();
-            if (value && value !== group.name) {
-              renameGroup(group.id, value);
-            } else {
-              setName(group.name);
-            }
-          }
-
-          return h(
-            'div',
-            { className: 'dsh-todo-group-row' },
-            h('input', {
-              className: 'dsh-todo-group-input',
-              value: name,
-              onChange: (event) => setName(event.target.value),
-              onBlur: commitName,
-              onKeyDown: (event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  event.currentTarget.blur();
-                } else if (event.key === 'Escape') {
-                  event.stopPropagation();
-                  setName(group.name);
-                  event.currentTarget.blur();
-                }
-              },
-              'aria-label': t('groupLabel'),
-            }),
-            h('span', { className: 'dsh-todo-group-count' }, t('taskCount').replace('{n}', String(taskCount))),
-            h(
-              'button',
-              {
-                type: 'button',
-                className: 'dsh-todo-iconbtn',
-                onClick: () => onDelete(group.id),
-                'aria-label': t('deleteGroup'),
-                title: t('deleteGroup'),
-              },
-              h(TrashIcon),
-            ),
-          );
-        }
-
-        function GroupDialog({ onClose }) {
-          useLocaleTick(ctx.locale);
-          const data = useStore();
-          const [draft, setDraft] = React.useState('');
-          const [confirmingId, setConfirmingId] = React.useState(null);
-
-          function create() {
-            const value = draft.trim();
-            if (!value) return;
-            addGroup(value);
-            setDraft('');
-          }
-
-          function countFor(id) {
-            return data.tasks.filter((task) => task.groupId === id).length;
-          }
-
-          return h(
-            'div',
-            {
-              className: 'dsh-todo-backdrop',
-              onMouseDown: (event) => {
-                if (event.target === event.currentTarget) onClose();
-              },
-              onKeyDown: (event) => {
-                if (event.key === 'Escape') {
-                  event.stopPropagation();
-                  onClose();
-                }
-              },
-            },
-            h(
-              'div',
-              { className: 'dsh-todo-dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': t('manageGroups') },
-              h(
-                'div',
-                { className: 'dsh-todo-dialog-head' },
-                h('h2', { className: 'dsh-todo-dialog-title' }, t('manageGroups')),
-                h(
-                  'button',
-                  { type: 'button', className: 'dsh-todo-iconbtn', onClick: onClose, 'aria-label': t('close'), title: t('close') },
-                  h(XIcon),
-                ),
-              ),
-              h(
-                'div',
-                { className: 'dsh-todo-add', style: { marginBottom: 0 } },
-                h('input', {
-                  className: 'dsh-todo-input',
-                  value: draft,
-                  onChange: (event) => setDraft(event.target.value),
-                  onKeyDown: (event) => {
-                    if (event.key === 'Enter') {
-                      event.preventDefault();
-                      create();
-                    }
-                  },
-                  placeholder: t('newGroupPlaceholder'),
-                  'aria-label': t('newGroupPlaceholder'),
-                  autoComplete: 'off',
-                }),
-                h(
-                  'button',
-                  { type: 'button', className: 'dsh-todo-primary', disabled: !draft.trim(), onClick: create },
-                  h(PlusIcon),
-                  t('createGroup'),
-                ),
-              ),
-              data.groups.length === 0
-                ? h('div', { className: 'dsh-todo-group-empty' }, t('groupsEmpty'))
-                : h(
-                    'div',
-                    { className: 'dsh-todo-group-list' },
-                    data.groups.map((group) =>
-                      confirmingId === group.id
-                        ? h(
-                            'div',
-                            { key: group.id, className: 'dsh-todo-group-confirm' },
-                            h(
-                              'div',
-                              { className: 'dsh-todo-group-confirm-text' },
-                              countFor(group.id) > 0
-                                ? t('deleteGroupWarning')
-                                    .replace('{name}', group.name)
-                                    .replace('{n}', String(countFor(group.id)))
-                                : t('deleteGroupWarningNoTasks').replace('{name}', group.name),
-                            ),
-                            h(
-                              'div',
-                              { className: 'dsh-todo-group-confirm-actions' },
-                              h(
-                                'button',
-                                { type: 'button', className: 'dsh-todo-ghost', onClick: () => setConfirmingId(null) },
-                                t('cancel'),
-                              ),
-                              h(
-                                'button',
-                                {
-                                  type: 'button',
-                                  className: 'dsh-todo-danger',
-                                  onClick: () => {
-                                    deleteGroup(group.id);
-                                    setConfirmingId(null);
-                                  },
-                                },
-                                t('deleteGroup'),
-                              ),
-                            ),
-                          )
-                        : h(GroupRow, {
-                            key: group.id,
-                            group,
-                            taskCount: countFor(group.id),
-                            onDelete: setConfirmingId,
-                          }),
-                    ),
-                  ),
-            ),
-          );
-        }
-
         function Page() {
           useLocaleTick(ctx.locale);
           const data = useStore();
-          const tasks = data.tasks;
-          const groups = data.groups;
+          const notesData = useNotesStore();
+          const pages = data.pages;
+          const notes = notesData.notes;
           const lang = ctx.locale.getLocale().active;
-
-          const [draft, setDraft] = React.useState('');
-          const [draftDue, setDraftDue] = React.useState('');
-          const [statusFilter, setStatusFilter] = React.useState('all');
-          const [dueFilter, setDueFilter] = React.useState('any');
-          const [groupFilter, setGroupFilter] = React.useState('all');
-          const [editingId, setEditingId] = React.useState(null);
-          const [managing, setManaging] = React.useState(false);
-
-          React.useEffect(() => {
-            if (
-              groupFilter !== 'all' &&
-              groupFilter !== 'inbox' &&
-              !groups.some((group) => group.id === groupFilter)
-            ) {
-              setGroupFilter('all');
-            }
-          }, [groups, groupFilter]);
-
-          const groupMap = new Map(groups.map((group) => [group.id, group.name]));
-          const inGroup = (task) =>
-            groupFilter === 'all'
-              ? true
-              : groupFilter === 'inbox'
-                ? !task.groupId
-                : task.groupId === groupFilter;
-          const scoped = tasks.filter(inGroup);
-          const activeCount = scoped.filter((task) => !task.done).length;
-          const doneCount = scoped.length - activeCount;
           const today = todayKey();
 
-          const visible = scoped
-            .filter((task) =>
-              statusFilter === 'all' ? true : statusFilter === 'active' ? !task.done : task.done,
-            )
-            .filter((task) => {
-              if (dueFilter === 'any') return true;
-              if (dueFilter === 'none') return !task.dueDate;
-              if (!task.dueDate) return false;
-              if (dueFilter === 'today') return task.dueDate === today;
-              if (dueFilter === 'tomorrow') return task.dueDate === addDays(today, 1);
-              if (dueFilter === 'week') return task.dueDate >= today && task.dueDate <= addDays(today, 6);
-              if (dueFilter === 'overdue') return task.dueDate < today;
-              return true;
-            });
+          const [view, setView] = React.useState('tasks');
+          const [activeNoteId, setActiveNoteId] = React.useState(null);
+          const [activePageId, setActivePageId] = React.useState(() => data.pages[0].id);
+          const [draft, setDraft] = React.useState('');
+          const [draftDue, setDraftDue] = React.useState('');
+          const [groupChoice, setGroupChoice] = React.useState('inbox');
+          const [statusFilter, setStatusFilter] = React.useState('all');
+          const [dueFilter, setDueFilter] = React.useState('any');
+          const [creatingGroup, setCreatingGroup] = React.useState(false);
+          const [groupDraft, setGroupDraft] = React.useState('');
+          const [editingTaskId, setEditingTaskId] = React.useState(null);
+          const [deletingGroupId, setDeletingGroupId] = React.useState(null);
+          const [confirmDeletePage, setConfirmDeletePage] = React.useState(false);
 
-          const addGroupId =
-            groupFilter !== 'all' && groupFilter !== 'inbox' ? groupFilter : null;
-          const addGroupName = addGroupId ? groupMap.get(addGroupId) : null;
-          const editingTask = editingId ? tasks.find((task) => task.id === editingId) : null;
+          React.useEffect(() => {
+            if (!pages.some((page) => page.id === activePageId)) {
+              setActivePageId(pages[0].id);
+            }
+          }, [pages, activePageId]);
 
-          function countForGroup(id) {
-            return tasks.filter((task) => {
-              if (task.done) return false;
-              if (id === 'all') return true;
-              if (id === 'inbox') return !task.groupId;
-              return task.groupId === id;
-            }).length;
-          }
+          React.useEffect(() => {
+            if (notes.length === 0) {
+              if (activeNoteId !== null) setActiveNoteId(null);
+              return;
+            }
+            if (!notes.some((note) => note.id === activeNoteId)) {
+              setActiveNoteId(notes[0].id);
+            }
+          }, [notes, activeNoteId]);
 
-          function chip(id, label) {
-            const count = countForGroup(id);
+          const activePage = pages.find((page) => page.id === activePageId) || pages[0];
+          const pageGroups = data.groups.filter((group) => group.pageId === activePage.id);
+          const pageTasks = data.tasks.filter((task) => task.pageId === activePage.id);
+
+          React.useEffect(() => {
+            setGroupChoice('inbox');
+            setCreatingGroup(false);
+            setGroupDraft('');
+            setEditingTaskId(null);
+            setDeletingGroupId(null);
+            setConfirmDeletePage(false);
+          }, [activePage.id]);
+
+          React.useEffect(() => {
+            if (groupChoice !== 'inbox' && !pageGroups.some((group) => group.id === groupChoice)) {
+              setGroupChoice('inbox');
+            }
+          }, [pageGroups, groupChoice]);
+
+          if (view === 'notes') {
             return h(
-              'button',
-              {
-                key: id,
-                type: 'button',
-                className: 'dsh-todo-chip',
-                'data-active': groupFilter === id,
-                onClick: () => setGroupFilter(id),
-              },
-              label,
-              count > 0 ? h('span', { className: 'dsh-todo-chip-count' }, String(count)) : null,
+              'div',
+              { className: 'dsh-todo-page' },
+              h('style', null, CSS),
+              h(
+                'div',
+                { className: 'dsh-todo-shell' },
+                h(Masthead, { view, onView: setView, t, lang }),
+                h(NotesView, {
+                  notes,
+                  activeId: activeNoteId,
+                  onSelect: setActiveNoteId,
+                  onCreate: () => {
+                    const id = addNote();
+                    setActiveNoteId(id);
+                  },
+                  onPatch: patchNote,
+                  onDelete: removeNote,
+                  t,
+                  lang,
+                }),
+              ),
             );
           }
 
-          const addForm = h(
-            'form',
-            {
-              className: 'dsh-todo-add',
-              onSubmit: (event) => {
-                event.preventDefault();
-                addTask({ text: draft, dueDate: draftDue, groupId: addGroupId });
-                setDraft('');
-                setDraftDue('');
-              },
-            },
-            h('input', {
-              className: 'dsh-todo-input',
-              value: draft,
-              onChange: (event) => setDraft(event.target.value),
-              onKeyDown: (event) => {
-                if (event.key === 'Escape') setDraft('');
-              },
-              placeholder: addGroupName
-                ? t('addToPlaceholder').replace('{group}', addGroupName)
-                : t('placeholder'),
-              'aria-label': t('placeholder'),
-              autoComplete: 'off',
-              spellCheck: false,
-            }),
-            h('input', {
-              type: 'date',
-              className: 'dsh-todo-date',
-              value: draftDue,
-              onChange: (event) => setDraftDue(event.target.value),
-              'aria-label': t('dueDateLabel'),
-            }),
-            h(
-              'button',
-              { className: 'dsh-todo-primary dsh-todo-addbtn', type: 'submit', disabled: !draft.trim() },
-              h(PlusIcon),
-              t('add'),
-            ),
-          );
+          const stats = new Map();
+          for (const page of pages) {
+            let open = 0;
+            let done = 0;
+            for (const task of data.tasks) {
+              if (task.pageId !== page.id) continue;
+              if (task.done) done += 1;
+              else open += 1;
+            }
+            stats.set(page.id, { open, done, total: open + done });
+          }
 
-          const groupsBar = h(
-            'div',
-            { className: 'dsh-todo-groups' },
-            chip('all', t('groupsAll')),
-            chip('inbox', t('groupsInbox')),
-            groups.map((group) => chip(group.id, group.name)),
-            h(
-              'button',
-              { type: 'button', className: 'dsh-todo-chip dsh-todo-manage', onClick: () => setManaging(true) },
-              h(PencilIcon),
-              t('manageGroups'),
-            ),
-          );
+          const openCount = pageTasks.filter((task) => !task.done).length;
+          const doneCount = pageTasks.length - openCount;
+
+          function matchesDue(task) {
+            if (dueFilter === 'any') return true;
+            if (dueFilter === 'none') return !task.dueDate;
+            if (!task.dueDate) return false;
+            if (dueFilter === 'today') return task.dueDate === today;
+            if (dueFilter === 'tomorrow') return task.dueDate === addDays(today, 1);
+            if (dueFilter === 'week') return task.dueDate >= today && task.dueDate <= addDays(today, 6);
+            if (dueFilter === 'overdue') return !task.done && task.dueDate < today;
+            return true;
+          }
+
+          function matchesStatus(task) {
+            if (statusFilter === 'all') return true;
+            if (statusFilter === 'active') return !task.done;
+            return task.done;
+          }
+
+          function matches(task) {
+            return matchesStatus(task) && matchesDue(task);
+          }
+
+          function sortDoneLast(tasks) {
+            return [...tasks.filter((task) => !task.done), ...tasks.filter((task) => task.done)];
+          }
+
+          const filtersActive = statusFilter !== 'all' || dueFilter !== 'any';
+          const pageStatsText =
+            pageTasks.length === 0
+              ? t('pageStatsEmpty')
+              : openCount === 0
+                ? t('pageStatsDone').replace('{done}', String(doneCount))
+                : t('pageStats')
+                    .replace('{open}', String(openCount))
+                    .replace('{done}', String(doneCount));
 
           const statuses = [
             ['all', t('filterAll')],
@@ -1415,105 +2713,111 @@ window.__ModuleLoader__.load({
             ['none', t('dueNone')],
           ];
 
-          const toolbar =
-            tasks.length > 0
-              ? h(
-                  'div',
-                  { className: 'dsh-todo-toolbar' },
-                  h(
+          const editingTask = editingTaskId
+            ? pageTasks.find((task) => task.id === editingTaskId)
+            : null;
+          const deletingGroup = deletingGroupId
+            ? pageGroups.find((group) => group.id === deletingGroupId)
+            : null;
+          const deletingGroupTaskCount = deletingGroup
+            ? pageTasks.filter((task) => task.groupId === deletingGroup.id).length
+            : 0;
+          const pageLabel = activePage.name || t('defaultPageName');
+
+          function renderSection(key, header, allTasks) {
+            const visible = sortDoneLast(allTasks.filter(matches));
+            return h(
+              'section',
+              { key, className: 'dsh-todo-group' },
+              header,
+              visible.length === 0
+                ? h(
                     'div',
-                    { className: 'dsh-todo-filters', role: 'group', 'aria-label': t('filterAll') },
-                    statuses.map(([id, label]) =>
-                      h(
-                        'button',
-                        {
-                          key: id,
-                          type: 'button',
-                          className: 'dsh-todo-filter',
-                          'aria-pressed': statusFilter === id,
-                          onClick: () => setStatusFilter(id),
-                        },
-                        label,
-                      ),
+                    { className: 'dsh-todo-group-empty' },
+                    allTasks.length === 0 ? t('noTasks') : t('noMatching'),
+                  )
+                : h(
+                    'ul',
+                    { className: 'dsh-todo-list' },
+                    visible.map((task) =>
+                      h(TaskRow, {
+                        key: task.id,
+                        task,
+                        onOpen: () => setEditingTaskId(task.id),
+                        onToggle: toggleTask,
+                        onRemove: removeTask,
+                        t,
+                        lang,
+                      }),
                     ),
                   ),
-                  h(
-                    'div',
-                    { className: 'dsh-todo-toolbar-right' },
-                    h(
-                      'span',
-                      { className: 'dsh-todo-duefilter' },
-                      h(CalendarIcon),
-                      h(
-                        'select',
-                        {
-                          value: dueFilter,
-                          onChange: (event) => setDueFilter(event.target.value),
-                          'aria-label': t('dueFilterLabel'),
-                        },
-                        dueOptions.map(([id, label]) => h('option', { key: id, value: id }, label)),
-                      ),
-                    ),
-                    doneCount > 0
-                      ? h(
-                          'button',
-                          {
-                            type: 'button',
-                            className: 'dsh-todo-clear',
-                            onClick: () =>
-                              clearCompleted((task) =>
-                                groupFilter === 'all'
-                                  ? true
-                                  : groupFilter === 'inbox'
-                                    ? !task.groupId
-                                    : task.groupId === groupFilter,
-                              ),
-                          },
-                          t('clearCompleted'),
-                        )
-                      : null,
-                  ),
-                )
-              : null;
+            );
+          }
 
-          const emptyState =
-            visible.length === 0
-              ? h(
+          const inboxTasks = pageTasks.filter((task) => !task.groupId);
+          const sections = [];
+          if (inboxTasks.length > 0 || pageGroups.length === 0) {
+            const inboxOpen = inboxTasks.filter((task) => !task.done).length;
+            sections.push(
+              renderSection(
+                'inbox',
+                h(
                   'div',
-                  { className: 'dsh-todo-empty' },
-                  h(
-                    'div',
-                    { className: 'dsh-todo-empty-title' },
-                    tasks.length === 0 ? t('emptyTitle') : t('nothingHere'),
-                  ),
-                  tasks.length === 0
-                    ? h('div', { className: 'dsh-todo-empty-hint' }, t('emptyHint'))
-                    : groupFilter !== 'all' && scoped.length === 0
-                      ? h('div', { className: 'dsh-todo-empty-hint' }, t('groupEmptyHint'))
-                      : null,
-                )
-              : null;
+                  { className: 'dsh-todo-group-head' },
+                  h('h2', { className: 'dsh-todo-group-label' }, t('groupsInbox')),
+                  inboxOpen > 0
+                    ? h('span', { className: 'dsh-todo-group-count' }, String(inboxOpen))
+                    : null,
+                ),
+                inboxTasks,
+              ),
+            );
+          }
+          for (const group of pageGroups) {
+            const groupTasks = pageTasks.filter((task) => task.groupId === group.id);
+            const groupOpen = groupTasks.filter((task) => !task.done).length;
+            sections.push(
+              renderSection(
+                group.id,
+                h(GroupHeader, {
+                  group,
+                  count: groupOpen,
+                  onRename: renameGroup,
+                  onDelete: setDeletingGroupId,
+                  t,
+                }),
+                groupTasks,
+              ),
+            );
+          }
 
-          const listNode =
-            visible.length === 0
-              ? emptyState
-              : h(
-                  'ul',
-                  { className: 'dsh-todo-list' },
-                  visible.map((task) =>
-                    h(TaskRow, {
-                      key: task.id,
-                      task,
-                      groupName:
-                        groupFilter === 'all' && task.groupId ? groupMap.get(task.groupId) : null,
-                      onOpen: () => setEditingId(task.id),
-                      onToggle: toggleTask,
-                      onRemove: removeTask,
-                      t,
-                      lang,
-                    }),
-                  ),
-                );
+          const pageEmpty = pageTasks.length === 0 && pageGroups.length === 0;
+
+          function submitTask(event) {
+            event.preventDefault();
+            const value = draft.trim();
+            if (!value) return;
+            const due = draftDue || null;
+            addTask({
+              pageId: activePage.id,
+              groupId: groupChoice === 'inbox' ? null : groupChoice,
+              text: value,
+              dueDate: due,
+            });
+            setDraft('');
+            setDraftDue('');
+            if (statusFilter === 'completed') setStatusFilter('all');
+            if (!matchesDue({ dueDate: due, done: false })) setDueFilter('any');
+          }
+
+          function submitGroup(event) {
+            event.preventDefault();
+            const value = groupDraft.trim();
+            if (!value) return;
+            addGroup(activePage.id, value);
+            setGroupDraft('');
+            setCreatingGroup(false);
+          }
 
           return h(
             'div',
@@ -1522,30 +2826,253 @@ window.__ModuleLoader__.load({
             h(
               'div',
               { className: 'dsh-todo-shell' },
+              h(Masthead, { view, onView: setView, t, lang }),
               h(
-                'header',
-                { className: 'dsh-todo-head' },
-                h('h1', { className: 'dsh-todo-title' }, t('title')),
+                'div',
+                { className: 'dsh-todo-workspace' },
+                h(PageRail, {
+                  pages,
+                  stats,
+                  activeId: activePage.id,
+                  onSelect: setActivePageId,
+                  onCreate: (name) => {
+                    const id = addPage(name);
+                    setActivePageId(id);
+                  },
+                  t,
+                }),
                 h(
-                  'span',
-                  { className: 'dsh-todo-count' },
-                  t('itemsLeft').replace('{n}', String(activeCount)),
+                  'div',
+                  { className: 'dsh-todo-content' },
+                  h(
+                    'header',
+                    { className: 'dsh-todo-pagehead' },
+                    h(
+                      'div',
+                      { className: 'dsh-todo-pagehead-main' },
+                      h(PageTitle, { page: activePage, onRename: (name) => renamePage(activePage.id, name), t }),
+                      h('div', { className: 'dsh-todo-pagestats' }, pageStatsText),
+                    ),
+                    h(
+                      'div',
+                      { className: 'dsh-todo-pagehead-tools' },
+                      h(
+                        'div',
+                        { className: 'dsh-todo-seg', role: 'group', 'aria-label': t('filtersLabel') },
+                        statuses.map(([id, label]) =>
+                          h(
+                            'button',
+                            {
+                              key: id,
+                              type: 'button',
+                              'aria-pressed': statusFilter === id,
+                              onClick: () => setStatusFilter(id),
+                            },
+                            label,
+                          ),
+                        ),
+                      ),
+                      h(
+                        'span',
+                        { className: 'dsh-todo-duecontrol' },
+                        h(CalendarIcon),
+                        h(
+                          'select',
+                          {
+                            value: dueFilter,
+                            onChange: (event) => setDueFilter(event.target.value),
+                            'aria-label': t('dueFilterLabel'),
+                          },
+                          dueOptions.map(([id, label]) => h('option', { key: id, value: id }, label)),
+                        ),
+                      ),
+                      filtersActive
+                        ? h(
+                            'button',
+                            {
+                              type: 'button',
+                              className: 'dsh-todo-reset',
+                              onClick: () => {
+                                setStatusFilter('all');
+                                setDueFilter('any');
+                              },
+                            },
+                            t('resetFilters'),
+                          )
+                        : null,
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'dsh-todo-page-delete',
+                          onClick: () => setConfirmDeletePage(true),
+                          disabled: pages.length <= 1,
+                          'aria-label': t('deletePage'),
+                          title: pages.length <= 1 ? t('keepOnePage') : t('deletePage'),
+                        },
+                        h(TrashIcon),
+                      ),
+                    ),
+                  ),
+                  h(
+                    'form',
+                    { className: 'dsh-todo-composer', onSubmit: submitTask },
+                    h('input', {
+                      className: 'dsh-todo-composer-text',
+                      value: draft,
+                      onChange: (event) => setDraft(event.target.value),
+                      onKeyDown: (event) => {
+                        if (event.key === 'Escape') setDraft('');
+                      },
+                      placeholder: t('placeholder'),
+                      'aria-label': t('placeholder'),
+                      autoComplete: 'off',
+                      spellCheck: false,
+                    }),
+                    h(
+                      'span',
+                      { className: 'dsh-todo-composer-field' },
+                      h(
+                        'select',
+                        {
+                          value: groupChoice,
+                          onChange: (event) => setGroupChoice(event.target.value),
+                          'aria-label': t('groupLabel'),
+                        },
+                        h('option', { value: 'inbox' }, t('groupsInbox')),
+                        pageGroups.map((group) => h('option', { key: group.id, value: group.id }, group.name)),
+                      ),
+                    ),
+                    h(
+                      'span',
+                      { className: 'dsh-todo-composer-field' },
+                      h(CalendarIcon),
+                      h('input', {
+                        type: 'date',
+                        value: draftDue,
+                        onChange: (event) => setDraftDue(event.target.value),
+                        'aria-label': t('dueDateLabel'),
+                      }),
+                    ),
+                    h(
+                      'button',
+                      { type: 'submit', className: 'dsh-todo-composer-add', disabled: !draft.trim() },
+                      h(PlusIcon),
+                      t('add'),
+                    ),
+                  ),
+                  pageEmpty
+                    ? h(
+                        'div',
+                        { className: 'dsh-todo-empty' },
+                        h('div', { className: 'dsh-todo-empty-title' }, t('emptyTitle')),
+                        h('div', { className: 'dsh-todo-empty-hint' }, t('emptyHint')),
+                      )
+                    : h('div', { className: 'dsh-todo-groups' }, sections),
+                  creatingGroup
+                    ? h(
+                        'form',
+                        { className: 'dsh-todo-groupform', onSubmit: submitGroup },
+                        h('input', {
+                          value: groupDraft,
+                          onChange: (event) => setGroupDraft(event.target.value),
+                          onKeyDown: (event) => {
+                            if (event.key === 'Escape') {
+                              event.stopPropagation();
+                              setCreatingGroup(false);
+                              setGroupDraft('');
+                            }
+                          },
+                          placeholder: t('groupName'),
+                          'aria-label': t('groupName'),
+                          autoFocus: true,
+                          autoComplete: 'off',
+                        }),
+                        h(
+                          'button',
+                          { type: 'submit', className: 'dsh-todo-primary', disabled: !groupDraft.trim() },
+                          h(PlusIcon),
+                          t('createGroup'),
+                        ),
+                        h(
+                          'button',
+                          {
+                            type: 'button',
+                            className: 'dsh-todo-ghost',
+                            onClick: () => {
+                              setCreatingGroup(false);
+                              setGroupDraft('');
+                            },
+                          },
+                          t('cancel'),
+                        ),
+                      )
+                    : h(
+                        'button',
+                        { type: 'button', className: 'dsh-todo-newgroup', onClick: () => setCreatingGroup(true) },
+                        h(PlusIcon, { size: 13 }),
+                        t('newGroup'),
+                      ),
+                  doneCount > 0
+                    ? h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'dsh-todo-clear',
+                          onClick: () => clearCompleted(activePage.id),
+                        },
+                        t('clearCompleted'),
+                      )
+                    : null,
                 ),
               ),
-              addForm,
-              groupsBar,
-              toolbar,
-              listNode,
             ),
             editingTask
               ? h(TaskDialog, {
                   key: editingTask.id,
                   task: editingTask,
-                  groups,
-                  onClose: () => setEditingId(null),
+                  groups: pageGroups,
+                  onClose: () => setEditingTaskId(null),
+                  t,
+                  lang,
                 })
               : null,
-            managing ? h(GroupDialog, { onClose: () => setManaging(false) }) : null,
+            deletingGroup
+              ? h(ConfirmDialog, {
+                  title: t('deleteGroup'),
+                  message:
+                    deletingGroupTaskCount > 0
+                      ? t('deleteGroupWarning')
+                          .replace('{name}', deletingGroup.name)
+                          .replace('{n}', String(deletingGroupTaskCount))
+                      : t('deleteGroupWarningNoTasks').replace('{name}', deletingGroup.name),
+                  confirmLabel: t('deleteGroup'),
+                  onConfirm: () => {
+                    deleteGroup(deletingGroup.id);
+                    setDeletingGroupId(null);
+                  },
+                  onClose: () => setDeletingGroupId(null),
+                  t,
+                })
+              : null,
+            confirmDeletePage
+              ? h(ConfirmDialog, {
+                  title: t('deletePage'),
+                  message:
+                    pageTasks.length > 0
+                      ? t('deletePageWarning')
+                          .replace('{name}', pageLabel)
+                          .replace('{n}', String(pageTasks.length))
+                      : t('deletePageWarningNoTasks').replace('{name}', pageLabel),
+                  confirmLabel: t('deletePage'),
+                  onConfirm: () => {
+                    deletePage(activePage.id);
+                    setConfirmDeletePage(false);
+                  },
+                  onClose: () => setConfirmDeletePage(false),
+                  t,
+                })
+              : null,
           );
         }
 
