@@ -381,12 +381,12 @@ window.__ModuleLoader__.load({
 }
 .dsh-todo-mini-primary {
   background: var(--dsw-alias-brand-primary);
-  color: #fff;
+  color: var(--dsw-alias-bg-base);
   font-weight: 600;
 }
 .dsh-todo-mini-primary:hover {
   background: var(--dsw-alias-brand-primary);
-  color: #fff;
+  color: var(--dsw-alias-bg-base);
   opacity: 0.92;
 }
 .dsh-todo-content { min-width: 0; }
@@ -467,6 +467,43 @@ window.__ModuleLoader__.load({
   background: var(--dsw-alias-bg-layer-2);
   color: var(--dsw-alias-label-primary);
 }
+.dsh-todo-select { position: relative; display: inline-flex; min-width: 0; }
+.dsh-todo-select-trigger { cursor: pointer; }
+.dsh-todo-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dsh-todo-select-caret { flex: none; margin-left: auto; opacity: 0.55; }
+.dsh-todo-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  min-width: max(100%, 160px);
+  max-height: 240px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-overlay);
+  box-shadow: 0 14px 34px rgb(0 0 0 / 22%);
+}
+.dsh-todo-select-menu.is-up { top: auto; bottom: calc(100% + 6px); }
+.dsh-todo-select-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.dsh-todo-select-option:hover,
+.dsh-todo-select-option[aria-selected="true"] { background: var(--dsw-alias-bg-layer-2); }
+.dsh-todo-select-option[aria-selected="true"] { font-weight: 600; }
 .dsh-todo-duecontrol {
   display: inline-flex;
   align-items: center;
@@ -477,17 +514,12 @@ window.__ModuleLoader__.load({
   border-radius: 8px;
   background: var(--dsw-alias-bg-layer-1);
   color: var(--dsw-alias-label-secondary);
-}
-.dsh-todo-duecontrol select {
-  max-width: 122px;
-  border: 0;
-  background: transparent;
-  color: var(--dsw-alias-label-primary);
   font: inherit;
-  font-size: 12px;
-  outline: none;
-  cursor: pointer;
+  font-size: 11px;
 }
+.dsh-todo-duecontrol .dsh-todo-select-value { max-width: 122px; color: var(--dsw-alias-label-primary); font-size: 12px; }
+.dsh-todo-field .dsh-todo-select { display: flex; width: 100%; }
+.dsh-todo-field-select { text-align: left; }
 .dsh-todo-reset {
   padding: 6px 2px;
   border: 0;
@@ -559,7 +591,6 @@ window.__ModuleLoader__.load({
   background: var(--dsw-alias-bg-base);
   color: var(--dsw-alias-label-secondary);
 }
-.dsh-todo-composer-field select,
 .dsh-todo-composer-field input {
   max-width: 118px;
   height: 100%;
@@ -572,7 +603,20 @@ window.__ModuleLoader__.load({
   outline: none;
 }
 .dsh-todo-composer-field input[type="date"] { max-width: 128px; }
-.dsh-todo-composer-field select { cursor: pointer; }
+.dsh-todo-composer-field .dsh-todo-select { height: 100%; max-width: 118px; }
+.dsh-todo-bare-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 12px;
+}
+.dsh-todo-bare-select .dsh-todo-select-value { max-width: 118px; }
 .dsh-todo-composer-add {
   display: inline-flex;
   align-items: center;
@@ -582,7 +626,7 @@ window.__ModuleLoader__.load({
   border: 0;
   border-radius: 8px;
   background: var(--dsw-alias-brand-primary);
-  color: #fff;
+  color: var(--dsw-alias-bg-base);
   font: inherit;
   font-size: 12px;
   font-weight: 600;
@@ -1001,7 +1045,7 @@ window.__ModuleLoader__.load({
   border: 0;
   border-radius: 8px;
   background: var(--dsw-alias-brand-primary);
-  color: #fff;
+  color: var(--dsw-alias-bg-base);
   font: inherit;
   font-size: 12px;
   font-weight: 600;
@@ -1009,6 +1053,13 @@ window.__ModuleLoader__.load({
 }
 .dsh-todo-primary:disabled { opacity: 0.4; cursor: default; }
 .dsh-todo-primary:not(:disabled):hover { opacity: 0.92; }
+.dsh-todo-composer-add:disabled,
+.dsh-todo-primary:disabled,
+.dsh-todo-mini-primary:disabled {
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+  opacity: 1;
+}
 .dsh-todo-ghost {
   display: inline-flex;
   align-items: center;
@@ -1683,6 +1734,14 @@ window.__ModuleLoader__.load({
       );
     }
 
+    function ChevronDownIcon({ size = 11 }) {
+      return h(
+        'svg',
+        { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
+        h('path', { d: 'M6 9l6 6 6-6' }),
+      );
+    }
+
     function ImageIcon({ size = 13 }) {
       return h(
         'svg',
@@ -1845,6 +1904,85 @@ window.__ModuleLoader__.load({
               ),
               h('div', { className: 'dsh-todo-date' }, formatStamp(lang)),
             ),
+          );
+        }
+
+        function SelectMenu({ value, options, onChange, ariaLabel, className = '', icon: Icon = null, menuUp = false }) {
+          const [open, setOpen] = React.useState(false);
+          const rootRef = React.useRef(null);
+          const current = options.find((option) => option.value === value) || options[0];
+
+          React.useEffect(() => {
+            if (!open) return undefined;
+            function onPointerDown(event) {
+              if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
+            }
+            function onKeyDown(event) {
+              if (event.key === 'Escape') setOpen(false);
+            }
+            document.addEventListener('mousedown', onPointerDown);
+            document.addEventListener('keydown', onKeyDown);
+            return () => {
+              document.removeEventListener('mousedown', onPointerDown);
+              document.removeEventListener('keydown', onKeyDown);
+            };
+          }, [open]);
+
+          return h(
+            'span',
+            {
+              className: 'dsh-todo-select',
+              ref: rootRef,
+              onKeyDown: (event) => {
+                if (open && event.key === 'Escape') {
+                  event.stopPropagation();
+                  setOpen(false);
+                }
+              },
+            },
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'dsh-todo-select-trigger ' + className,
+                onClick: () => setOpen((valueNow) => !valueNow),
+                'aria-haspopup': 'listbox',
+                'aria-expanded': open,
+                'aria-label': ariaLabel,
+                title: ariaLabel,
+              },
+              Icon ? h(Icon) : null,
+              h('span', { className: 'dsh-todo-select-value' }, current ? current.label : ''),
+              h('span', { className: 'dsh-todo-select-caret' }, h(ChevronDownIcon)),
+            ),
+            open
+              ? h(
+                  'div',
+                  {
+                    className: 'dsh-todo-select-menu' + (menuUp ? ' is-up' : ''),
+                    role: 'listbox',
+                    'aria-label': ariaLabel,
+                  },
+                  options.map((option) =>
+                    h(
+                      'button',
+                      {
+                        key: option.value,
+                        type: 'button',
+                        role: 'option',
+                        'aria-selected': option.value === value,
+                        className: 'dsh-todo-select-option',
+                        autoFocus: option.value === value,
+                        onClick: () => {
+                          onChange(option.value);
+                          setOpen(false);
+                        },
+                      },
+                      option.label,
+                    ),
+                  ),
+                )
+              : null,
           );
         }
 
@@ -2517,15 +2655,17 @@ window.__ModuleLoader__.load({
                 { className: 'dsh-todo-field' },
                 h('span', { className: 'dsh-todo-label' }, t('groupLabel')),
                 h(
-                  'select',
+                  SelectMenu,
                   {
-                    className: 'dsh-todo-control',
                     value: groupId,
-                    onChange: (event) => setGroupId(event.target.value),
-                    'aria-label': t('groupLabel'),
+                    options: [{ value: '', label: t('groupsInbox') }].concat(
+                      groups.map((group) => ({ value: group.id, label: group.name })),
+                    ),
+                    onChange: setGroupId,
+                    ariaLabel: t('groupLabel'),
+                    className: 'dsh-todo-control dsh-todo-field-select',
+                    menuUp: true,
                   },
-                  h('option', { value: '' }, t('groupsInbox')),
-                  groups.map((group) => h('option', { key: group.id, value: group.id }, group.name)),
                 ),
               ),
               h(
@@ -2873,18 +3013,15 @@ window.__ModuleLoader__.load({
                         ),
                       ),
                       h(
-                        'span',
-                        { className: 'dsh-todo-duecontrol' },
-                        h(CalendarIcon),
-                        h(
-                          'select',
-                          {
-                            value: dueFilter,
-                            onChange: (event) => setDueFilter(event.target.value),
-                            'aria-label': t('dueFilterLabel'),
-                          },
-                          dueOptions.map(([id, label]) => h('option', { key: id, value: id }, label)),
-                        ),
+                        SelectMenu,
+                        {
+                          value: dueFilter,
+                          options: dueOptions.map(([value, label]) => ({ value, label })),
+                          onChange: setDueFilter,
+                          ariaLabel: t('dueFilterLabel'),
+                          className: 'dsh-todo-duecontrol',
+                          icon: CalendarIcon,
+                        },
                       ),
                       filtersActive
                         ? h(
@@ -2932,16 +3069,15 @@ window.__ModuleLoader__.load({
                     h(
                       'span',
                       { className: 'dsh-todo-composer-field' },
-                      h(
-                        'select',
-                        {
-                          value: groupChoice,
-                          onChange: (event) => setGroupChoice(event.target.value),
-                          'aria-label': t('groupLabel'),
-                        },
-                        h('option', { value: 'inbox' }, t('groupsInbox')),
-                        pageGroups.map((group) => h('option', { key: group.id, value: group.id }, group.name)),
-                      ),
+                      h(SelectMenu, {
+                        value: groupChoice,
+                        options: [{ value: 'inbox', label: t('groupsInbox') }].concat(
+                          pageGroups.map((group) => ({ value: group.id, label: group.name })),
+                        ),
+                        onChange: setGroupChoice,
+                        ariaLabel: t('groupLabel'),
+                        className: 'dsh-todo-bare-select',
+                      }),
                     ),
                     h(
                       'span',
