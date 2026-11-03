@@ -168,14 +168,19 @@ window.__ModuleLoader__.load({
   --dsh-todo-ink-3: var(--dsw-alias-label-tertiary, var(--dsw-alias-label-secondary));
   --dsh-todo-line: color-mix(in srgb, var(--dsh-todo-ink) 11%, transparent);
   --dsh-todo-line-2: color-mix(in srgb, var(--dsh-todo-ink) 18%, transparent);
+  /* Opaque surfaces are mixed from our own canvas, not from the theme's translucent
+     overlay tokens: on some themes the overlay resolves to a flat grey, which turns
+     dialogs, menus, and fields into light grey slabs. */
+  --dsh-todo-canvas: #fdfbf7;
+  --dsh-todo-sheet: color-mix(in srgb, var(--dsh-todo-ink) 2%, var(--dsh-todo-canvas));
   --dsh-todo-accent: var(--dsh-todo-ink);
-  --dsh-todo-accent-ink: var(--dsw-alias-bg-overlay);
+  --dsh-todo-accent-ink: var(--dsh-todo-canvas);
   --dsh-todo-tint: color-mix(in srgb, var(--dsh-todo-ink) 8%, transparent);
   --dsh-todo-tint-soft: color-mix(in srgb, var(--dsh-todo-ink) 4.5%, transparent);
-  --dsh-todo-field: color-mix(in srgb, var(--dsh-todo-ink) 4.5%, transparent);
-  --dsh-todo-raised: color-mix(in srgb, var(--dsh-todo-ink) 3%, var(--dsw-alias-bg-overlay));
+  --dsh-todo-field: color-mix(in srgb, var(--dsh-todo-ink) 4%, var(--dsh-todo-canvas));
+  --dsh-todo-raised: color-mix(in srgb, var(--dsh-todo-ink) 7%, var(--dsh-todo-canvas));
   --dsh-todo-surface: var(--dsh-todo-raised);
-  --dsh-todo-overlay: var(--dsw-alias-bg-overlay);
+  --dsh-todo-overlay: var(--dsh-todo-sheet);
   --dsh-todo-danger: var(--dsw-alias-state-error-primary, #cf4a4a);
   --dsh-todo-shadow: 0 16px 40px rgb(38 30 18 / 12%), 0 1px 3px rgb(38 30 18 / 9%);
   height: 100%;
@@ -189,6 +194,7 @@ window.__ModuleLoader__.load({
 }
 .dsh-todo-page[data-dark="true"] {
   color-scheme: dark;
+  --dsh-todo-canvas: #0d1014;
   --dsh-todo-shadow: 0 26px 72px rgb(0 0 0 / 58%), 0 2px 10px rgb(0 0 0 / 38%);
 }
 .dsh-todo-page * { box-sizing: border-box; }
@@ -442,10 +448,10 @@ window.__ModuleLoader__.load({
 }
 .dsh-todo-titleinput {
   width: 100%;
-  margin: 0 0 0 -7px;
-  padding: 3px 7px;
+  margin: 0 0 0 -10px;
+  padding: 6px 10px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
   color: var(--dsh-todo-ink);
   font: inherit;
@@ -1045,10 +1051,10 @@ window.__ModuleLoader__.load({
   color: var(--dsh-todo-ink-3);
 }
 .dsh-todo-note-body {
-  margin-top: 16px;
-  min-height: 420px;
+  margin: 14px 0 0 -18px;
+  min-height: 400px;
   max-width: 68ch;
-  padding: 0;
+  padding: 16px 18px 32px;
   border: 0;
   background: transparent;
   color: var(--dsh-todo-ink);
@@ -1056,8 +1062,9 @@ window.__ModuleLoader__.load({
   line-height: 1.72;
   outline: none;
   overflow-wrap: anywhere;
-  border-radius: 10px;
-  transition: background 140ms ease, box-shadow 140ms ease;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: background 160ms ease, box-shadow 160ms ease;
 }
 .dsh-todo-note-body:empty::before {
   content: attr(data-placeholder);
@@ -1065,8 +1072,9 @@ window.__ModuleLoader__.load({
   pointer-events: none;
 }
 .dsh-todo-note-body:focus-visible {
-  outline: 2px solid var(--dsh-todo-accent);
-  outline-offset: 2px;
+  outline: none;
+  background: var(--dsh-todo-tint-soft);
+  box-shadow: inset 0 0 0 1px var(--dsh-todo-line-2);
 }
 .dsh-todo-note-body.is-dragging {
   background: var(--dsh-todo-tint-soft);
