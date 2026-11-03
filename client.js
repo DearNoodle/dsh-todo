@@ -38,6 +38,7 @@ window.__ModuleLoader__.load({
       pageStats: '{open} unfinished · {done} done',
       pageStatsDone: '{done} done',
       pageStatsEmpty: 'No tasks yet',
+      progressLabel: 'Progress',
       placeholder: 'Add a task…',
       add: 'Add',
       filterAll: 'All',
@@ -76,6 +77,9 @@ window.__ModuleLoader__.load({
       deleteTask: 'Delete task',
       hasDetails: 'Has details',
       clearDate: 'Clear date',
+      setDate: 'Add date',
+      prevMonth: 'Previous month',
+      nextMonth: 'Next month',
       openTask: 'Open task details',
       markDone: 'Mark as done',
       markActive: 'Mark as unfinished',
@@ -109,6 +113,7 @@ window.__ModuleLoader__.load({
       pageStats: '{open} 項未完成 · {done} 項已完成',
       pageStatsDone: '{done} 項已完成',
       pageStatsEmpty: '尚無任務',
+      progressLabel: '完成進度',
       placeholder: '新增一件事…',
       add: '新增',
       filterAll: '全部',
@@ -147,6 +152,9 @@ window.__ModuleLoader__.load({
       deleteTask: '刪除任務',
       hasDetails: '有詳細內容',
       clearDate: '清除日期',
+      setDate: '設定日期',
+      prevMonth: '上個月',
+      nextMonth: '下個月',
       openTask: '開啟任務詳細內容',
       markDone: '標記為完成',
       markActive: '標記為未完成',
@@ -155,124 +163,176 @@ window.__ModuleLoader__.load({
     const CSS = `
 .dsh-todo-page {
   --dsh-todo-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --dsh-todo-ink: var(--dsw-alias-label-primary);
+  --dsh-todo-ink-2: var(--dsw-alias-label-secondary);
+  --dsh-todo-ink-3: var(--dsw-alias-label-tertiary, var(--dsw-alias-label-secondary));
+  --dsh-todo-line: color-mix(in srgb, var(--dsh-todo-ink) 11%, transparent);
+  --dsh-todo-line-2: color-mix(in srgb, var(--dsh-todo-ink) 18%, transparent);
+  --dsh-todo-accent: var(--dsh-todo-ink);
+  --dsh-todo-accent-ink: var(--dsw-alias-bg-overlay);
+  --dsh-todo-tint: color-mix(in srgb, var(--dsh-todo-ink) 8%, transparent);
+  --dsh-todo-tint-soft: color-mix(in srgb, var(--dsh-todo-ink) 4.5%, transparent);
+  --dsh-todo-field: color-mix(in srgb, var(--dsh-todo-ink) 4.5%, transparent);
+  --dsh-todo-raised: color-mix(in srgb, var(--dsh-todo-ink) 3%, var(--dsw-alias-bg-overlay));
+  --dsh-todo-surface: var(--dsh-todo-raised);
+  --dsh-todo-overlay: var(--dsw-alias-bg-overlay);
+  --dsh-todo-danger: var(--dsw-alias-state-error-primary, #cf4a4a);
+  --dsh-todo-shadow: 0 16px 40px rgb(38 30 18 / 12%), 0 1px 3px rgb(38 30 18 / 9%);
   height: 100%;
   overflow-y: auto;
   container-type: inline-size;
+  color-scheme: light;
   background: var(--dsw-alias-bg-base);
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+.dsh-todo-page[data-dark="true"] {
+  color-scheme: dark;
+  --dsh-todo-shadow: 0 26px 72px rgb(0 0 0 / 58%), 0 2px 10px rgb(0 0 0 / 38%);
 }
 .dsh-todo-page * { box-sizing: border-box; }
 .dsh-todo-shell {
-  max-width: 1040px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 44px 28px 120px;
+  padding: 38px 32px 140px;
 }
+
+/* masthead */
 .dsh-todo-masthead {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 28px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  gap: 20px;
+  margin-bottom: 34px;
 }
-.dsh-todo-wordmark,
-.dsh-todo-date {
+.dsh-todo-wordmark {
   font-family: var(--dsh-todo-mono);
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--dsw-alias-label-secondary);
+  font-weight: 600;
+  color: var(--dsh-todo-ink-2);
 }
-.dsh-todo-wordmark { font-weight: 600; }
-.dsh-todo-date { font-variant-numeric: tabular-nums; }
 .dsh-todo-masthead-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
+}
+.dsh-todo-date {
+  font-family: var(--dsh-todo-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--dsh-todo-ink-3);
 }
 .dsh-todo-viewtabs {
   display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
+  align-items: center;
+  gap: 20px;
 }
 .dsh-todo-viewtabs button {
-  padding: 4px 10px;
+  position: relative;
+  padding: 0 0 7px;
   border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  background: none;
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 11px;
+  font-size: 12.5px;
   cursor: pointer;
+  transition: color 120ms ease;
 }
+.dsh-todo-viewtabs button:hover { color: var(--dsh-todo-ink); }
 .dsh-todo-viewtabs button[aria-selected="true"] {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink);
+  font-weight: 500;
 }
+.dsh-todo-viewtabs button[aria-selected="true"]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--dsh-todo-accent);
+}
+
+/* two planes: index rail + content */
 .dsh-todo-workspace {
   display: grid;
-  grid-template-columns: clamp(168px, 22%, 208px) minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: minmax(0, 192px) minmax(0, 1fr);
+  gap: 56px;
   align-items: start;
 }
 .dsh-todo-rail {
   position: sticky;
-  top: 28px;
+  top: 34px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  min-height: 240px;
-  padding-right: 20px;
-  border-right: 1px solid var(--dsw-alias-border-l1);
+  gap: 1px;
+  min-height: 180px;
+}
+.dsh-todo-rail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+  padding: 0 8px;
 }
 .dsh-todo-rail-label {
-  margin: 2px 8px 10px;
   font-family: var(--dsh-todo-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-3);
+}
+.dsh-todo-rail-add {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: -4px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--dsh-todo-ink-3);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.dsh-todo-rail-add:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
 }
 .dsh-todo-pagerail-item {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 7px;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  padding: 9px 10px 10px 12px;
+  padding: 7px 8px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 7px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
 .dsh-todo-pagerail-item:hover {
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-primary);
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
 }
 .dsh-todo-pagerail-item[data-active="true"] {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-primary);
-}
-.dsh-todo-pagerail-item[data-active="true"]::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 9px;
-  bottom: 9px;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--dsw-alias-brand-primary);
+  background: var(--dsh-todo-tint);
+  color: var(--dsh-todo-ink);
 }
 .dsh-todo-pagerail-top {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -284,73 +344,46 @@ window.__ModuleLoader__.load({
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 13px;
-  font-weight: 500;
+  letter-spacing: -0.005em;
 }
+.dsh-todo-pagerail-item[data-active="true"] .dsh-todo-pagerail-name { font-weight: 600; }
 .dsh-todo-pagerail-count {
   flex: none;
   font-family: var(--dsh-todo-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-variant-numeric: tabular-nums;
-  opacity: 0.75;
+  color: var(--dsh-todo-ink-2);
 }
-.dsh-todo-rail-rule {
-  display: block;
-  height: 2px;
-  overflow: hidden;
-  border-radius: 99px;
-  background: var(--dsw-alias-border-l1);
-}
-.dsh-todo-rail-rule span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--dsw-alias-brand-primary);
-}
-.dsh-todo-newpage {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 9px;
-  padding: 8px 10px;
-  border: 1px dashed var(--dsw-alias-border-l1);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  font: inherit;
-  font-size: 12px;
-  text-align: left;
-  cursor: pointer;
-}
-.dsh-todo-newpage:hover {
-  border-color: var(--dsw-alias-border-l2);
-  color: var(--dsw-alias-label-primary);
+.dsh-todo-pagerail-date {
+  flex: none;
+  font-family: var(--dsh-todo-mono);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--dsh-todo-ink-3);
 }
 .dsh-todo-pageform {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 9px;
+  margin-top: 8px;
   padding: 8px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 9px;
-  background: var(--dsw-alias-bg-layer-1);
+  border-radius: 8px;
+  background: var(--dsh-todo-tint-soft);
 }
 .dsh-todo-pageform input {
   width: 100%;
   height: 30px;
   padding: 0 8px;
-  border: 1px solid var(--dsw-alias-border-l1);
+  border: 1px solid var(--dsh-todo-line-2);
   border-radius: 6px;
-  background: var(--dsw-alias-bg-base);
-  color: var(--dsw-alias-label-primary);
+  background: var(--dsh-todo-field);
+  color: var(--dsh-todo-ink);
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   outline: none;
 }
-.dsh-todo-pageform input:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
-}
+.dsh-todo-pageform input:focus { border-color: var(--dsh-todo-accent); }
 .dsh-todo-form-actions {
   display: flex;
   justify-content: flex-end;
@@ -358,332 +391,424 @@ window.__ModuleLoader__.load({
 }
 .dsh-todo-mini {
   height: 26px;
-  padding: 0 8px;
-  border: 1px solid transparent;
+  padding: 0 9px;
+  border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 11px;
+  font-size: 11.5px;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
 .dsh-todo-mini:hover {
-  color: var(--dsw-alias-label-primary);
-  background: var(--dsw-alias-bg-layer-2);
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
 }
 .dsh-todo-mini:disabled {
-  opacity: 0.4;
+  color: var(--dsh-todo-ink-3);
+  background: transparent;
+  opacity: 0.55;
   cursor: default;
 }
-.dsh-todo-mini:disabled:hover {
-  color: var(--dsw-alias-label-secondary);
-  background: transparent;
-}
 .dsh-todo-mini-primary {
-  background: var(--dsw-alias-brand-primary);
-  color: var(--dsw-alias-bg-base);
+  background: var(--dsh-todo-accent);
+  color: var(--dsh-todo-accent-ink);
   font-weight: 600;
 }
-.dsh-todo-mini-primary:hover {
-  background: var(--dsw-alias-brand-primary);
-  color: var(--dsw-alias-bg-base);
-  opacity: 0.92;
+.dsh-todo-mini-primary:not(:disabled):hover {
+  background: var(--dsh-todo-accent);
+  color: var(--dsh-todo-accent-ink);
+  opacity: 0.9;
 }
+.dsh-todo-mini-primary:disabled {
+  background: var(--dsh-todo-tint);
+  color: var(--dsh-todo-ink-3);
+  opacity: 1;
+}
+
+/* page header */
 .dsh-todo-content { min-width: 0; }
 .dsh-todo-pagehead {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px 24px;
-  margin-bottom: 20px;
+  gap: 14px 24px;
 }
 .dsh-todo-pagehead-main {
-  flex: 1 1 260px;
+  flex: 1 1 280px;
   min-width: 0;
 }
 .dsh-todo-titleinput {
   width: 100%;
-  margin: 0 0 0 -5px;
-  padding: 1px 5px 3px;
+  margin: 0 0 0 -7px;
+  padding: 3px 7px;
   border: 1px solid transparent;
-  border-radius: 7px;
+  border-radius: 8px;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink);
   font: inherit;
-  font-size: clamp(24px, 3vw, 30px);
-  font-weight: 650;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
   outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
-.dsh-todo-titleinput::placeholder {
-  color: var(--dsw-alias-label-secondary);
-  opacity: 0.55;
-}
-.dsh-todo-titleinput:hover {
-  border-color: var(--dsw-alias-border-l1);
-}
+.dsh-todo-titleinput::placeholder { color: var(--dsh-todo-ink-3); }
+.dsh-todo-titleinput:hover { border-color: var(--dsh-todo-line); }
 .dsh-todo-titleinput:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  background: var(--dsw-alias-bg-layer-1);
-  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+  border-color: var(--dsh-todo-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsh-todo-accent) 14%, transparent);
 }
 .dsh-todo-pagestats {
-  margin-top: 7px;
+  margin: 8px 0 0 1px;
   font-family: var(--dsh-todo-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-  color: var(--dsw-alias-label-secondary);
+  letter-spacing: 0.05em;
+  color: var(--dsh-todo-ink-2);
 }
 .dsh-todo-pagehead-tools {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
-  padding-top: 4px;
+  gap: 6px;
+  padding-top: 3px;
 }
 .dsh-todo-seg {
   display: inline-flex;
   gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--dsw-alias-border-l1);
+  padding: 2px;
   border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
+  background: var(--dsh-todo-field);
 }
 .dsh-todo-seg button {
-  padding: 4px 10px;
+  padding: 5px 10px;
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-3);
   font: inherit;
-  font-size: 12px;
+  font-size: 11.5px;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
+.dsh-todo-seg button:hover { color: var(--dsh-todo-ink); }
 .dsh-todo-seg button[aria-pressed="true"] {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-primary);
+  background: var(--dsh-todo-tint);
+  color: var(--dsh-todo-ink);
+  font-weight: 500;
 }
 .dsh-todo-select { position: relative; display: inline-flex; min-width: 0; }
 .dsh-todo-select-trigger { cursor: pointer; }
-.dsh-todo-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dsh-todo-select-caret { flex: none; margin-left: auto; opacity: 0.55; }
+.dsh-todo-select-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dsh-todo-select-caret {
+  flex: none;
+  margin-left: 2px;
+  opacity: 0.5;
+}
 .dsh-todo-select-menu {
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
   z-index: 40;
-  min-width: max(100%, 160px);
-  max-height: 240px;
+  min-width: max(100%, 168px);
+  max-height: 264px;
   overflow: auto;
-  padding: 4px;
-  border: 1px solid var(--dsw-alias-border-l1);
+  padding: 5px;
+  border: 1px solid var(--dsh-todo-line-2);
   border-radius: 10px;
-  background: var(--dsw-alias-bg-overlay);
-  box-shadow: 0 14px 34px rgb(0 0 0 / 22%);
+  background: var(--dsh-todo-raised);
+  box-shadow: var(--dsh-todo-shadow);
 }
 .dsh-todo-select-menu.is-up { top: auto; bottom: calc(100% + 6px); }
 .dsh-todo-select-option {
   display: flex;
   align-items: center;
+  gap: 8px;
   width: 100%;
   padding: 7px 9px;
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
-.dsh-todo-select-option:hover,
-.dsh-todo-select-option[aria-selected="true"] { background: var(--dsw-alias-bg-layer-2); }
-.dsh-todo-select-option[aria-selected="true"] { font-weight: 600; }
+.dsh-todo-select-option:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
+}
+.dsh-todo-select-option[aria-selected="true"] {
+  background: var(--dsh-todo-tint);
+  color: var(--dsh-todo-ink);
+  font-weight: 500;
+}
+.dsh-todo-select-option-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dsh-todo-select-check {
+  flex: none;
+  margin-left: auto;
+  opacity: 0;
+}
+.dsh-todo-select-option[aria-selected="true"] .dsh-todo-select-check { opacity: 1; }
 .dsh-todo-duecontrol {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 6px;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-secondary);
-  font: inherit;
-  font-size: 11px;
-}
-.dsh-todo-duecontrol .dsh-todo-select-value { max-width: 122px; color: var(--dsw-alias-label-primary); font-size: 12px; }
-.dsh-todo-field .dsh-todo-select { display: flex; width: 100%; }
-.dsh-todo-field-select { text-align: left; }
-.dsh-todo-reset {
-  padding: 6px 2px;
+  height: 30px;
+  padding: 0 9px;
   border: 0;
+  border-radius: 8px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 12px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
+  font-size: 11.5px;
+  transition: background 120ms ease, color 120ms ease;
 }
-.dsh-todo-reset:hover { color: var(--dsw-alias-label-primary); }
+.dsh-todo-duecontrol:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
+}
+.dsh-todo-duecontrol[data-active="true"] { background: var(--dsh-todo-tint); }
+.dsh-todo-duecontrol .dsh-todo-select-value {
+  max-width: 120px;
+  color: var(--dsh-todo-ink-2);
+}
+.dsh-todo-duecontrol[data-active="true"] .dsh-todo-select-value {
+  color: var(--dsh-todo-ink);
+  font-weight: 500;
+}
+.dsh-todo-field .dsh-todo-select { display: flex; width: 100%; }
+.dsh-todo-field-select {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  text-align: left;
+}
+.dsh-todo-field-select .dsh-todo-select-value { flex: 1; text-align: left; }
+.dsh-todo-reset {
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsh-todo-ink-2);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.dsh-todo-reset:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
+}
 .dsh-todo-page-delete {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   padding: 0;
-  border: 1px solid var(--dsw-alias-border-l1);
+  border: 0;
   border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-secondary);
+  background: transparent;
+  color: var(--dsh-todo-ink-3);
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
 .dsh-todo-page-delete:hover {
-  border-color: var(--dsw-alias-border-l2);
-  color: var(--dsw-alias-state-error-primary);
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-danger);
 }
 .dsh-todo-page-delete:disabled {
-  opacity: 0.35;
+  color: var(--dsh-todo-ink-3);
+  background: transparent;
+  opacity: 0.4;
   cursor: default;
 }
-.dsh-todo-page-delete:disabled:hover {
-  border-color: var(--dsw-alias-border-l1);
-  color: var(--dsw-alias-label-secondary);
+
+/* completion line */
+.dsh-todo-progress {
+  height: 2px;
+  margin: 20px 0 26px;
+  border-radius: 99px;
+  background: var(--dsh-todo-line);
+  overflow: hidden;
 }
+.dsh-todo-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--dsh-todo-accent);
+  transition: width 200ms ease;
+}
+
+/* composer: a line, not a box */
 .dsh-todo-composer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 30px;
-  padding: 7px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 12px;
-  background: var(--dsw-alias-bg-layer-1);
+  gap: 4px;
+  margin: 0 0 34px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--dsh-todo-line-2);
+  transition: border-color 160ms ease;
 }
+.dsh-todo-composer:focus-within { border-bottom-color: var(--dsh-todo-accent); }
 .dsh-todo-composer-text {
-  flex: 1 1 220px;
+  flex: 1 1 240px;
   min-width: 0;
-  height: 34px;
-  padding: 0 8px;
+  height: 44px;
+  padding: 0 6px;
   border: 0;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink);
   font: inherit;
-  font-size: 14px;
+  font-size: 14.5px;
   outline: none;
 }
-.dsh-todo-composer-text::placeholder { color: var(--dsw-alias-label-secondary); }
+.dsh-todo-composer-text::placeholder { color: var(--dsh-todo-ink-3); }
 .dsh-todo-composer-field {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   height: 30px;
   padding: 0 8px;
-  border: 1px solid var(--dsw-alias-border-l1);
+  border: 0;
   border-radius: 7px;
-  background: var(--dsw-alias-bg-base);
-  color: var(--dsw-alias-label-secondary);
+  background: transparent;
+  color: var(--dsh-todo-ink-2);
+  transition: background 120ms ease, color 120ms ease;
+}
+.dsh-todo-composer-field:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink-2);
 }
 .dsh-todo-composer-field input {
-  max-width: 118px;
+  max-width: 112px;
   height: 100%;
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 12px;
+  font-size: 11.5px;
   outline: none;
 }
-.dsh-todo-composer-field input[type="date"] { max-width: 128px; }
-.dsh-todo-composer-field .dsh-todo-select { height: 100%; max-width: 118px; }
+.dsh-todo-composer-field input[type="date"] { max-width: 122px; }
+.dsh-todo-composer-field input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.45;
+  cursor: pointer;
+}
+.dsh-todo-composer-field input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 0.8; }
+.dsh-todo-composer-field .dsh-todo-select { height: 100%; max-width: 116px; }
 .dsh-todo-bare-select {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: flex-start;
+  gap: 4px;
   height: 100%;
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 12px;
+  font-size: 11.5px;
 }
-.dsh-todo-bare-select .dsh-todo-select-value { max-width: 118px; }
+.dsh-todo-bare-select .dsh-todo-select-value { max-width: 110px; }
 .dsh-todo-composer-add {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 34px;
-  padding: 0 14px;
+  height: 30px;
+  padding: 0 11px;
   border: 0;
   border-radius: 8px;
-  background: var(--dsw-alias-brand-primary);
-  color: var(--dsw-alias-bg-base);
+  background: transparent;
+  color: var(--dsh-todo-ink);
   font: inherit;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
 }
-.dsh-todo-composer-add:hover { opacity: 0.92; }
-.dsh-todo-composer-add:disabled { opacity: 0.4; cursor: default; }
+.dsh-todo-composer-add:not(:disabled):hover { background: var(--dsh-todo-tint); }
+.dsh-todo-composer-add:disabled {
+  background: transparent;
+  color: var(--dsh-todo-ink-3);
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* sections + rows */
 .dsh-todo-groups { display: flex; flex-direction: column; }
-.dsh-todo-group { padding: 18px 0 4px; border-top: 1px solid var(--dsw-alias-border-l1); }
-.dsh-todo-group:first-child { padding-top: 0; border-top: 0; }
+.dsh-todo-group + .dsh-todo-group {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--dsh-todo-line);
+}
 .dsh-todo-group-head {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 32px;
-  margin-bottom: 3px;
+  min-height: 26px;
+  margin-bottom: 4px;
 }
 .dsh-todo-group-name {
   flex: 1;
   min-width: 0;
-  margin-left: -5px;
-  padding: 3px 5px;
+  margin-left: -6px;
+  padding: 2px 6px;
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 15px;
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: -0.005em;
+  letter-spacing: 0.01em;
   outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
-.dsh-todo-group-name::placeholder { color: var(--dsw-alias-label-secondary); }
-.dsh-todo-group-name:hover { border-color: var(--dsw-alias-border-l1); }
+.dsh-todo-group-name::placeholder { color: var(--dsh-todo-ink-3); }
+.dsh-todo-group-name:hover { border-color: var(--dsh-todo-line); }
 .dsh-todo-group-name:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  background: var(--dsw-alias-bg-layer-1);
-  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+  border-color: var(--dsh-todo-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsh-todo-accent) 12%, transparent);
 }
 .dsh-todo-group-label {
   flex: 1;
   min-width: 0;
-  margin-left: -5px;
-  padding: 3px 5px;
-  font-size: 15px;
+  margin: 0 0 0 -6px;
+  padding: 2px 6px;
+  color: var(--dsh-todo-ink-2);
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: -0.005em;
+  letter-spacing: 0.01em;
 }
 .dsh-todo-group-count {
   flex: none;
-  padding: 2px 7px;
-  border-radius: 99px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-secondary);
   font-family: var(--dsh-todo-mono);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
+  color: var(--dsh-todo-ink-2);
 }
 .dsh-todo-group-actions {
   display: flex;
@@ -693,92 +818,7 @@ window.__ModuleLoader__.load({
 }
 .dsh-todo-group:hover .dsh-todo-group-actions,
 .dsh-todo-group:focus-within .dsh-todo-group-actions { opacity: 1; }
-@media (hover: none) {
-  .dsh-todo-group-actions { opacity: 1; }
-}
 .dsh-todo-iconbtn {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  cursor: pointer;
-}
-.dsh-todo-iconbtn:hover {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-primary);
-}
-.dsh-todo-group-actions .dsh-todo-iconbtn:hover {
-  color: var(--dsw-alias-state-error-primary);
-}
-.dsh-todo-list { margin: 0; padding: 0; list-style: none; }
-.dsh-todo-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 -8px;
-  padding: 7px 8px;
-  border-radius: 7px;
-}
-.dsh-todo-row:hover { background: var(--dsw-alias-bg-layer-1); }
-.dsh-todo-check {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--dsw-alias-brand-primary);
-  cursor: pointer;
-}
-.dsh-todo-text {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 14px;
-  line-height: 1.45;
-  text-align: left;
-  overflow-wrap: anywhere;
-  cursor: pointer;
-}
-.dsh-todo-text:hover { color: var(--dsw-alias-brand-primary); }
-.dsh-todo-row[data-done="true"] .dsh-todo-text {
-  color: var(--dsw-alias-label-secondary);
-  text-decoration: line-through;
-  text-decoration-color: var(--dsw-alias-border-l2);
-}
-.dsh-todo-row[data-done="true"] .dsh-todo-text:hover {
-  color: var(--dsw-alias-label-primary);
-}
-.dsh-todo-note {
-  flex: none;
-  display: grid;
-  place-items: center;
-  color: var(--dsw-alias-label-secondary);
-}
-.dsh-todo-due {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 4px;
-  padding: 1px 2px;
-  color: var(--dsw-alias-label-secondary);
-  font-family: var(--dsh-todo-mono);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.dsh-todo-due[data-state="overdue"] { color: var(--dsw-alias-state-error-primary); }
-.dsh-todo-due[data-state="today"] { color: var(--dsw-alias-brand-primary); }
-.dsh-todo-row[data-done="true"] .dsh-todo-due { color: var(--dsw-alias-label-secondary); }
-.dsh-todo-delete {
-  flex: none;
   display: grid;
   place-items: center;
   width: 26px;
@@ -787,183 +827,327 @@ window.__ModuleLoader__.load({
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-3);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.dsh-todo-iconbtn:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
+}
+.dsh-todo-group-actions .dsh-todo-iconbtn:hover { color: var(--dsh-todo-danger); }
+.dsh-todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dsh-todo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 -8px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  transition: background 120ms ease;
+}
+.dsh-todo-row:hover { background: var(--dsh-todo-tint-soft); }
+.dsh-todo-checkwrap {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+.dsh-todo-check {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.dsh-todo-cbox {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--dsh-todo-line-2);
+  border-radius: 6px;
+  background: transparent;
+  color: transparent;
+  pointer-events: none;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+.dsh-todo-checkwrap:hover .dsh-todo-cbox { border-color: var(--dsh-todo-accent); }
+.dsh-todo-check:checked + .dsh-todo-cbox {
+  border-color: var(--dsh-todo-accent);
+  background: var(--dsh-todo-accent);
+  color: var(--dsh-todo-accent-ink);
+}
+.dsh-todo-check:focus-visible + .dsh-todo-cbox {
+  outline: 2px solid var(--dsh-todo-accent);
+  outline-offset: 2px;
+}
+.dsh-todo-text {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsh-todo-ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.dsh-todo-row[data-done="true"] .dsh-todo-text {
+  color: var(--dsh-todo-ink-3);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.dsh-todo-note {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 20px;
+  color: var(--dsh-todo-ink-3);
+}
+.dsh-todo-due {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 78px;
+  padding: 2px 0;
+  color: var(--dsh-todo-ink-2);
+  font-family: var(--dsh-todo-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dsh-todo-due[data-state="overdue"] { color: var(--dsh-todo-danger); }
+.dsh-todo-due[data-state="today"] {
+  color: var(--dsh-todo-accent);
+  font-weight: 600;
+}
+.dsh-todo-row[data-done="true"] .dsh-todo-due { color: var(--dsh-todo-ink-3); }
+.dsh-todo-delete {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dsh-todo-ink-3);
   cursor: pointer;
   opacity: 0;
-  transition: opacity 120ms ease;
+  transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
 }
 .dsh-todo-row:hover .dsh-todo-delete,
 .dsh-todo-delete:focus-visible { opacity: 1; }
 .dsh-todo-delete:hover {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-state-error-primary);
-}
-@media (hover: none) {
-  .dsh-todo-delete { opacity: 1; }
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-danger);
 }
 .dsh-todo-group-empty {
-  padding: 7px 8px;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
+  padding: 6px 8px 8px;
+  color: var(--dsh-todo-ink-3);
+  font-size: 12.5px;
+}
+
+/* list footer */
+.dsh-todo-listfoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid var(--dsh-todo-line);
 }
 .dsh-todo-newgroup {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 24px;
-  padding: 8px 10px;
-  border: 1px dashed var(--dsw-alias-border-l1);
-  border-radius: 8px;
+  margin-left: -6px;
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
 .dsh-todo-newgroup:hover {
-  border-color: var(--dsw-alias-border-l2);
-  color: var(--dsw-alias-label-primary);
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
 }
 .dsh-todo-clear {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 20px;
-  padding: 3px 0;
+  padding: 5px 6px;
   border: 0;
+  border-radius: 6px;
   background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  font-family: var(--dsh-todo-mono);
-  font-size: 10px;
-  letter-spacing: 0.04em;
+  color: var(--dsh-todo-ink-2);
+  font: inherit;
+  font-size: 12px;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
 .dsh-todo-clear:hover {
-  color: var(--dsw-alias-label-primary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
 }
 .dsh-todo-groupform {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  margin-top: 24px;
 }
 .dsh-todo-groupform input {
   width: 220px;
   max-width: 100%;
-  height: 34px;
+  height: 32px;
   padding: 0 10px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-primary);
+  border: 1px solid var(--dsh-todo-line-2);
+  border-radius: 7px;
+  background: var(--dsh-todo-field);
+  color: var(--dsh-todo-ink);
   font: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   outline: none;
 }
-.dsh-todo-groupform input:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
-}
-.dsh-todo-pagerail-date {
+.dsh-todo-groupform input:focus { border-color: var(--dsh-todo-accent); }
+.dsh-todo-groupform .dsh-todo-primary,
+.dsh-todo-groupform .dsh-todo-ghost { height: 32px; }
+
+/* notes */
+.dsh-todo-note-meta {
+  margin-top: 10px;
   font-family: var(--dsh-todo-mono);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  opacity: 0.65;
-}
-.dsh-todo-note-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 7px;
-  color: var(--dsw-alias-label-secondary);
-  font-family: var(--dsh-todo-mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--dsh-todo-ink-3);
 }
 .dsh-todo-note-body {
-  min-height: 340px;
-  padding: 18px 20px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 12px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-primary);
-  font-size: 14px;
-  line-height: 1.7;
+  margin-top: 16px;
+  min-height: 420px;
+  max-width: 68ch;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dsh-todo-ink);
+  font-size: 15px;
+  line-height: 1.72;
   outline: none;
   overflow-wrap: anywhere;
-  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
-}
-.dsh-todo-note-body:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  background: var(--dsw-alias-bg-layer-2);
+  border-radius: 10px;
+  transition: background 140ms ease, box-shadow 140ms ease;
 }
 .dsh-todo-note-body:empty::before {
   content: attr(data-placeholder);
-  color: var(--dsw-alias-label-secondary);
+  color: var(--dsh-todo-ink-3);
   pointer-events: none;
 }
-.dsh-todo-note-body.is-dragging {
-  border-color: var(--dsw-alias-brand-primary);
-  background: var(--dsw-alias-bg-layer-2);
-  box-shadow: inset 0 0 0 1px var(--dsw-alias-brand-primary);
+.dsh-todo-note-body:focus-visible {
+  outline: 2px solid var(--dsh-todo-accent);
+  outline-offset: 2px;
 }
-.dsh-todo-note-body p { margin: 0 0 10px; }
+.dsh-todo-note-body.is-dragging {
+  background: var(--dsh-todo-tint-soft);
+  box-shadow: inset 0 0 0 2px var(--dsh-todo-accent);
+}
+.dsh-todo-note-body p { margin: 0 0 0.85em; }
 .dsh-todo-note-body p:last-child { margin-bottom: 0; }
 .dsh-todo-note-body img {
   display: block;
   max-width: 100%;
   height: auto;
-  margin: 10px 0;
-  border-radius: 8px;
+  margin: 14px 0;
+  border-radius: 10px;
 }
-.dsh-todo-note-body a { color: var(--dsw-alias-brand-primary); }
+.dsh-todo-note-body a { color: var(--dsh-todo-accent); }
 .dsh-todo-note-body blockquote {
-  margin: 10px 0;
-  padding: 2px 0 2px 12px;
-  border-left: 2px solid var(--dsw-alias-border-l2);
-  color: var(--dsw-alias-label-secondary);
+  margin: 12px 0;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid var(--dsh-todo-line-2);
+  color: var(--dsh-todo-ink-2);
 }
 .dsh-todo-note-body pre,
 .dsh-todo-note-body code {
   font-family: var(--dsh-todo-mono);
-  font-size: 12px;
+  font-size: 12.5px;
 }
 .dsh-todo-note-body pre {
-  padding: 10px;
-  border-radius: 8px;
-  background: var(--dsw-alias-bg-base);
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--dsh-todo-field);
   overflow-x: auto;
 }
 .dsh-todo-note-hint {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 9px;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 11px;
+  margin-top: 22px;
+  color: var(--dsh-todo-ink-3);
+  font-size: 11.5px;
 }
 .dsh-todo-note-error {
-  margin-top: 9px;
-  color: var(--dsw-alias-state-error-primary);
-  font-size: 11px;
+  margin-top: 10px;
+  color: var(--dsh-todo-danger);
+  font-size: 11.5px;
   line-height: 1.5;
 }
+
+/* empty states */
 .dsh-todo-empty {
-  padding: 48px 24px;
-  border: 1px dashed var(--dsw-alias-border-l1);
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 58px 24px 40px;
   text-align: center;
 }
-.dsh-todo-empty-title { font-size: 14px; font-weight: 600; }
-.dsh-todo-empty-hint {
-  margin-top: 6px;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
+.dsh-todo-empty-mark {
+  color: var(--dsh-todo-line-2);
+  overflow: visible;
 }
-.dsh-todo-empty .dsh-todo-primary { margin-top: 16px; }
+.dsh-todo-empty-mark .dsh-todo-mark-box { fill: none; }
+.dsh-todo-empty-mark .dsh-todo-mark-checked {
+  fill: var(--dsh-todo-accent);
+  stroke: var(--dsh-todo-accent);
+}
+.dsh-todo-empty-mark .dsh-todo-mark-tick { stroke: var(--dsh-todo-accent-ink); }
+.dsh-todo-empty-title {
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dsh-todo-ink);
+}
+.dsh-todo-empty-hint {
+  margin-top: 7px;
+  max-width: 36ch;
+  color: var(--dsh-todo-ink-2);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.dsh-todo-empty .dsh-todo-primary { margin-top: 18px; }
+
+/* dialogs */
 .dsh-todo-backdrop {
   position: fixed;
   inset: 0;
@@ -972,56 +1156,72 @@ window.__ModuleLoader__.load({
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgb(0 0 0 / 42%);
-  backdrop-filter: blur(2px);
+  background: rgb(10 14 20 / 42%);
+  backdrop-filter: blur(3px);
+  animation: dsh-todo-fade 140ms ease both;
 }
 .dsh-todo-dialog {
-  width: min(540px, 100%);
+  width: min(560px, 100%);
   max-height: calc(100vh - 48px);
   overflow: auto;
-  padding: 20px;
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: 14px;
-  background: var(--dsw-alias-bg-overlay);
-  box-shadow: 0 24px 64px rgb(0 0 0 / 32%);
+  padding: 24px;
+  border: 1px solid var(--dsh-todo-line);
+  border-radius: 16px;
+  background: var(--dsh-todo-overlay);
+  box-shadow: var(--dsh-todo-shadow);
+  animation: dsh-todo-lift 160ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 .dsh-todo-dialog-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
-.dsh-todo-dialog-title { margin: 0; font-size: 17px; font-weight: 600; }
-.dsh-todo-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.dsh-todo-dialog-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.dsh-todo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+.dsh-todo-field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0 14px;
+}
 .dsh-todo-label {
-  color: var(--dsw-alias-label-secondary);
-  font-family: var(--dsh-todo-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--dsh-todo-ink-2);
 }
 .dsh-todo-control {
   width: 100%;
   height: 38px;
   padding: 0 10px;
-  border: 1px solid var(--dsw-alias-border-l1);
+  border: 1px solid var(--dsh-todo-line-2);
   border-radius: 8px;
-  background: var(--dsw-alias-bg-layer-1);
-  color: var(--dsw-alias-label-primary);
+  background: var(--dsh-todo-field);
+  color: var(--dsh-todo-ink);
   font: inherit;
   font-size: 13px;
   outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 .dsh-todo-control:focus {
-  border-color: var(--dsw-alias-brand-primary);
-  box-shadow: 0 0 0 1px var(--dsw-alias-brand-primary);
+  border-color: var(--dsh-todo-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsh-todo-accent) 14%, transparent);
 }
 .dsh-todo-textarea {
-  min-height: 116px;
+  min-height: 108px;
   padding: 9px 10px;
   resize: vertical;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .dsh-todo-daterow { display: flex; align-items: center; gap: 6px; }
 .dsh-todo-daterow .dsh-todo-control { flex: 1; }
@@ -1030,51 +1230,57 @@ window.__ModuleLoader__.load({
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid var(--dsw-alias-border-l1);
+  margin-top: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--dsh-todo-line);
 }
 .dsh-todo-actions-right { display: flex; align-items: center; gap: 8px; }
 .dsh-todo-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  height: 38px;
+  gap: 6px;
+  height: 36px;
   padding: 0 14px;
-  border: 0;
+  border: 1px solid var(--dsh-todo-line-2);
   border-radius: 8px;
-  background: var(--dsw-alias-brand-primary);
-  color: var(--dsw-alias-bg-base);
+  background: var(--dsh-todo-tint);
+  color: var(--dsh-todo-ink);
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
 }
-.dsh-todo-primary:disabled { opacity: 0.4; cursor: default; }
-.dsh-todo-primary:not(:disabled):hover { opacity: 0.92; }
-.dsh-todo-composer-add:disabled,
-.dsh-todo-primary:disabled,
-.dsh-todo-mini-primary:disabled {
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-secondary);
-  opacity: 1;
+.dsh-todo-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--dsh-todo-ink) 14%, transparent);
+  border-color: color-mix(in srgb, var(--dsh-todo-ink) 30%, transparent);
+}
+.dsh-todo-primary:disabled {
+  background: transparent;
+  color: var(--dsh-todo-ink-3);
+  border-color: var(--dsh-todo-line);
+  cursor: default;
 }
 .dsh-todo-ghost {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 34px;
-  padding: 0 12px;
-  border: 1px solid var(--dsw-alias-border-l1);
+  height: 36px;
+  padding: 0 13px;
+  border: 1px solid var(--dsh-todo-line-2);
   border-radius: 8px;
   background: transparent;
-  color: var(--dsw-alias-label-primary);
+  color: var(--dsh-todo-ink-2);
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
 }
-.dsh-todo-ghost:hover { background: var(--dsw-alias-bg-layer-2); }
+.dsh-todo-ghost:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
+}
 .dsh-todo-danger {
   display: inline-flex;
   align-items: center;
@@ -1084,24 +1290,178 @@ window.__ModuleLoader__.load({
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--dsw-alias-state-error-primary);
+  color: var(--dsh-todo-danger);
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   cursor: pointer;
+  transition: background 120ms ease;
 }
-.dsh-todo-danger:hover { background: var(--dsw-alias-bg-layer-2); }
+.dsh-todo-danger:hover { background: var(--dsh-todo-tint-soft); }
 .dsh-todo-confirm-text {
-  margin: 0 0 4px;
-  color: var(--dsw-alias-label-secondary);
+  margin: 0;
+  color: var(--dsh-todo-ink-2);
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 .dsh-todo-confirm-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 22px;
 }
+/* date picker */
+.dsh-todo-datepick { position: relative; display: inline-flex; min-width: 0; }
+.dsh-todo-datebtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--dsh-todo-ink-2);
+  font: inherit;
+  font-size: 11.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.dsh-todo-datebtn-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dsh-todo-datebtn[data-active="true"] { color: var(--dsh-todo-ink); }
+.dsh-todo-datebtn[data-state="overdue"] { color: var(--dsh-todo-danger); }
+.dsh-todo-datebtn[data-state="today"] {
+  color: var(--dsh-todo-accent);
+  font-weight: 600;
+}
+.dsh-todo-composer-field .dsh-todo-datepick { height: 100%; }
+.dsh-todo-field .dsh-todo-datepick { display: flex; flex: 1; min-width: 0; }
+.dsh-todo-field .dsh-todo-datebtn {
+  flex: 1;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--dsh-todo-line-2);
+  border-radius: 8px;
+  background: var(--dsh-todo-field);
+  color: var(--dsh-todo-ink);
+  font-size: 13px;
+  justify-content: flex-start;
+}
+.dsh-todo-field .dsh-todo-datebtn:hover { background: var(--dsh-todo-tint-soft); }
+.dsh-todo-field .dsh-todo-datebtn[aria-expanded="true"],
+.dsh-todo-field .dsh-todo-datebtn:focus-visible {
+  border-color: var(--dsh-todo-accent);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsh-todo-accent) 14%, transparent);
+}
+
+.dsh-todo-calendar {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 50;
+  width: 252px;
+  padding: 10px;
+  border: 1px solid var(--dsh-todo-line-2);
+  border-radius: 12px;
+  background: var(--dsh-todo-raised);
+  box-shadow: var(--dsh-todo-shadow);
+  animation: dsh-todo-fade 120ms ease both;
+}
+.dsh-todo-calendar.is-up { top: auto; bottom: calc(100% + 8px); }
+.dsh-todo-calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+.dsh-todo-calendar-month {
+  font-family: var(--dsh-todo-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--dsh-todo-ink-2);
+}
+.dsh-todo-calendar-nav { display: flex; gap: 1px; }
+.dsh-todo-calendar-nav .dsh-todo-iconbtn { width: 24px; height: 24px; }
+.dsh-todo-calendar-nav .is-prev svg { transform: rotate(90deg); }
+.dsh-todo-calendar-nav .is-next svg { transform: rotate(-90deg); }
+.dsh-todo-calendar-week,
+.dsh-todo-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.dsh-todo-calendar-week span {
+  padding: 2px 0 5px;
+  text-align: center;
+  font-family: var(--dsh-todo-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--dsh-todo-ink-3);
+}
+.dsh-todo-calendar-day {
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--dsh-todo-ink-2);
+  font: inherit;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 110ms ease, color 110ms ease;
+}
+.dsh-todo-calendar-day:hover {
+  background: var(--dsh-todo-tint-soft);
+  color: var(--dsh-todo-ink);
+}
+.dsh-todo-calendar-day[data-outside="true"] {
+  color: var(--dsh-todo-ink-3);
+  opacity: 0.5;
+}
+.dsh-todo-calendar-day[data-today="true"] {
+  color: var(--dsh-todo-ink);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--dsh-todo-line-2);
+}
+.dsh-todo-calendar-day[data-selected="true"] {
+  background: var(--dsh-todo-accent);
+  color: var(--dsh-todo-accent-ink);
+  font-weight: 600;
+  box-shadow: none;
+}
+.dsh-todo-calendar-day:focus-visible {
+  outline: 2px solid var(--dsh-todo-accent);
+  outline-offset: 1px;
+}
+.dsh-todo-calendar-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--dsh-todo-line);
+}
+.dsh-todo-calendar-foot .dsh-todo-mini { height: 24px; padding: 0 7px; font-size: 11px; }
+
+@keyframes dsh-todo-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dsh-todo-lift {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+/* focus */
 .dsh-todo-primary:focus-visible,
 .dsh-todo-ghost:focus-visible,
 .dsh-todo-danger:focus-visible,
@@ -1111,20 +1471,22 @@ window.__ModuleLoader__.load({
 .dsh-todo-viewtabs button:focus-visible,
 .dsh-todo-reset:focus-visible,
 .dsh-todo-pagerail-item:focus-visible,
-.dsh-todo-newpage:focus-visible,
+.dsh-todo-rail-add:focus-visible,
 .dsh-todo-newgroup:focus-visible,
 .dsh-todo-clear:focus-visible,
 .dsh-todo-page-delete:focus-visible,
 .dsh-todo-composer-add:focus-visible,
 .dsh-todo-text:focus-visible,
 .dsh-todo-delete:focus-visible,
-.dsh-todo-duecontrol:focus-within,
-.dsh-todo-composer-field:focus-within {
-  outline: 2px solid var(--dsw-alias-brand-primary);
+.dsh-todo-select-trigger:focus-visible,
+.dsh-todo-empty .dsh-todo-primary:focus-visible {
+  outline: 2px solid var(--dsh-todo-accent);
   outline-offset: 2px;
 }
-@container (max-width: 700px) {
-  .dsh-todo-shell { padding: 28px 18px 96px; }
+
+@container (max-width: 760px) {
+  .dsh-todo-shell { padding: 24px 18px 120px; }
+  .dsh-todo-masthead { margin-bottom: 22px; }
   .dsh-todo-date { display: none; }
   .dsh-todo-workspace { display: block; }
   .dsh-todo-rail {
@@ -1133,39 +1495,39 @@ window.__ModuleLoader__.load({
     z-index: 5;
     flex-direction: row;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     min-height: 0;
-    margin-bottom: 22px;
-    padding: 10px 0;
+    margin: 0 -18px 20px;
+    padding: 10px 18px;
     overflow-x: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--dsw-alias-border-l1);
-    background: var(--dsw-alias-bg-base);
+    border-bottom: 1px solid var(--dsh-todo-line);
+    background: var(--dsh-todo-raised);
+  }
+  .dsh-todo-rail-head {
+    order: 9;
+    margin: 0;
+    padding: 0;
   }
   .dsh-todo-rail-label { display: none; }
+  .dsh-todo-rail-add {
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    border: 1px solid var(--dsh-todo-line-2);
+    border-radius: 99px;
+  }
   .dsh-todo-pagerail-item {
     flex: 0 0 auto;
     width: auto;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border: 1px solid var(--dsw-alias-border-l1);
+    padding: 6px 11px;
+    border: 1px solid var(--dsh-todo-line);
     border-radius: 99px;
-    background: var(--dsw-alias-bg-layer-1);
   }
   .dsh-todo-pagerail-item[data-active="true"] {
-    border-color: var(--dsw-alias-border-l2);
+    border-color: transparent;
+    background: var(--dsh-todo-tint);
   }
-  .dsh-todo-pagerail-item[data-active="true"]::before { display: none; }
-  .dsh-todo-pagerail-name { max-width: 140px; }
-  .dsh-todo-rail-rule { display: none; }
-  .dsh-todo-newpage {
-    flex: 0 0 auto;
-    margin: 0;
-    padding: 6px 10px;
-    border-radius: 99px;
-  }
+  .dsh-todo-pagerail-name { max-width: 148px; }
   .dsh-todo-pageform {
     flex: 0 0 190px;
     margin: 0;
@@ -1175,10 +1537,14 @@ window.__ModuleLoader__.load({
   .dsh-todo-composer-add { margin-left: auto; }
 }
 @media (hover: none) {
-  .dsh-todo-delete { opacity: 1; }
+  .dsh-todo-delete,
+  .dsh-todo-group-actions { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dsh-todo-page * { transition: none !important; }
+  .dsh-todo-page * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 `;
 
@@ -1616,6 +1982,27 @@ window.__ModuleLoader__.load({
       return toDateKey(new Date(year, month - 1, day + days));
     }
 
+    function parseDateKey(key) {
+      if (!isDateKey(key)) return null;
+      const [year, month, day] = key.split('-').map(Number);
+      return { year, month: month - 1, day };
+    }
+
+    function monthCells(year, month) {
+      const start = new Date(year, month, 1);
+      const offset = start.getDay();
+      const cells = [];
+      for (let index = 0; index < 42; index += 1) {
+        const date = new Date(year, month, 1 - offset + index);
+        cells.push({
+          key: toDateKey(date),
+          day: date.getDate(),
+          outside: date.getMonth() !== month,
+        });
+      }
+      return cells;
+    }
+
     function dueState(task) {
       if (!task.dueDate) return 'none';
       const today = todayKey();
@@ -1691,6 +2078,89 @@ window.__ModuleLoader__.load({
     function useLocaleTick(locale) {
       const [, force] = React.useState(0);
       React.useEffect(() => locale.subscribe(() => force((n) => n + 1)), [locale]);
+    }
+
+    function useDarkMode() {
+      const read = () =>
+        typeof document !== 'undefined' &&
+        document.body &&
+        document.body.hasAttribute('data-ds-dark-theme');
+      const [dark, setDark] = React.useState(read);
+      React.useEffect(() => {
+        if (typeof document === 'undefined' || !document.body || typeof MutationObserver === 'undefined') {
+          return undefined;
+        }
+        const target = document.body;
+        const sync = () => setDark(target.hasAttribute('data-ds-dark-theme'));
+        sync();
+        const observer = new MutationObserver(sync);
+        observer.observe(target, { attributes: true, attributeFilter: ['data-ds-dark-theme'] });
+        return () => observer.disconnect();
+      }, []);
+      return dark;
+    }
+
+    function ListMark({ size = 46 }) {
+      const row = (offset, width) => [
+        h('rect', {
+          key: 'box' + offset,
+          className: 'dsh-todo-mark-box',
+          x: 1.75,
+          y: offset + 0.75,
+          width: 10,
+          height: 10,
+          rx: 3,
+          stroke: 'currentColor',
+          strokeWidth: 1.5,
+        }),
+        h('path', {
+          key: 'line' + offset,
+          className: 'dsh-todo-mark-line',
+          d: 'M18 ' + (offset + 5.75) + 'h' + width,
+          stroke: 'currentColor',
+          strokeWidth: 1.5,
+          strokeLinecap: 'round',
+        }),
+      ];
+      return h(
+        'svg',
+        {
+          className: 'dsh-todo-empty-mark',
+          width: size,
+          height: Math.round(size * 0.8),
+          viewBox: '0 0 46 37',
+          fill: 'none',
+          'aria-hidden': 'true',
+          style: { display: 'block' },
+        },
+        h('rect', {
+          className: 'dsh-todo-mark-box dsh-todo-mark-checked',
+          x: 1.75,
+          y: 1.75,
+          width: 10,
+          height: 10,
+          rx: 3,
+          stroke: 'currentColor',
+          strokeWidth: 1.5,
+        }),
+        h('path', {
+          className: 'dsh-todo-mark-tick',
+          d: 'M4.6 6.9l2.1 2.1 3.9-4.4',
+          stroke: 'currentColor',
+          strokeWidth: 1.7,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+        }),
+        h('path', {
+          className: 'dsh-todo-mark-line',
+          d: 'M18 6.75h25',
+          stroke: 'currentColor',
+          strokeWidth: 1.5,
+          strokeLinecap: 'round',
+        }),
+        row(12, 25),
+        row(24, 19),
+      );
     }
 
     function PlusIcon({ size = 14 }) {
@@ -1826,14 +2296,18 @@ window.__ModuleLoader__.load({
           return h(
             'li',
             { className: 'dsh-todo-row', 'data-done': task.done ? 'true' : 'false' },
-            h('input', {
-              type: 'checkbox',
-              className: 'dsh-todo-check',
-              checked: task.done,
-              onClick: (event) => event.stopPropagation(),
-              onChange: () => onToggle(task.id),
-              'aria-label': task.done ? t('markActive') : t('markDone'),
-            }),
+            h(
+              'label',
+              { className: 'dsh-todo-checkwrap', title: task.done ? t('markActive') : t('markDone') },
+              h('input', {
+                type: 'checkbox',
+                className: 'dsh-todo-check',
+                checked: task.done,
+                onChange: () => onToggle(task.id),
+                'aria-label': task.done ? t('markActive') : t('markDone'),
+              }),
+              h('span', { className: 'dsh-todo-cbox', 'aria-hidden': 'true' }, h(CheckIcon, { size: 12 })),
+            ),
             h(
               'button',
               {
@@ -1845,17 +2319,25 @@ window.__ModuleLoader__.load({
               },
               task.text,
             ),
-            task.notes.trim()
-              ? h('span', { className: 'dsh-todo-note', title: t('hasDetails'), 'aria-label': t('hasDetails') }, h(NoteIcon))
-              : null,
-            task.dueDate
-              ? h(
-                  'span',
-                  { className: 'dsh-todo-due', 'data-state': state, title: task.dueDate },
-                  h(CalendarIcon),
-                  dueText,
-                )
-              : null,
+            h(
+              'span',
+              {
+                className: 'dsh-todo-note',
+                title: task.notes.trim() ? t('hasDetails') : undefined,
+                'aria-label': task.notes.trim() ? t('hasDetails') : undefined,
+              },
+              task.notes.trim() ? h(NoteIcon) : null,
+            ),
+            h(
+              'span',
+              {
+                className: 'dsh-todo-due',
+                'data-state': task.dueDate ? state : 'none',
+                title: task.dueDate || undefined,
+              },
+              task.dueDate ? h(CalendarIcon) : null,
+              task.dueDate ? dueText : null,
+            ),
             h(
               'button',
               {
@@ -1907,7 +2389,16 @@ window.__ModuleLoader__.load({
           );
         }
 
-        function SelectMenu({ value, options, onChange, ariaLabel, className = '', icon: Icon = null, menuUp = false }) {
+        function SelectMenu({
+          value,
+          options,
+          onChange,
+          ariaLabel,
+          className = '',
+          icon: Icon = null,
+          menuUp = false,
+          active = false,
+        }) {
           const [open, setOpen] = React.useState(false);
           const rootRef = React.useRef(null);
           const current = options.find((option) => option.value === value) || options[0];
@@ -1945,6 +2436,7 @@ window.__ModuleLoader__.load({
               {
                 type: 'button',
                 className: 'dsh-todo-select-trigger ' + className,
+                'data-active': active ? 'true' : 'false',
                 onClick: () => setOpen((valueNow) => !valueNow),
                 'aria-haspopup': 'listbox',
                 'aria-expanded': open,
@@ -1978,8 +2470,193 @@ window.__ModuleLoader__.load({
                           setOpen(false);
                         },
                       },
-                      option.label,
+                      h('span', { className: 'dsh-todo-select-option-label' }, option.label),
+                      h('span', { className: 'dsh-todo-select-check' }, h(CheckIcon, { size: 12 })),
                     ),
+                  ),
+                )
+              : null,
+          );
+        }
+
+        function DatePicker({ value, onChange, ariaLabel, t, lang, menuUp = false }) {
+          const [open, setOpen] = React.useState(false);
+          const [view, setView] = React.useState(() => {
+            const parsed = parseDateKey(value) || parseDateKey(todayKey());
+            return { year: parsed.year, month: parsed.month };
+          });
+          const [focusKey, setFocusKey] = React.useState(value || todayKey());
+          const rootRef = React.useRef(null);
+          const today = todayKey();
+
+          React.useEffect(() => {
+            if (!open) return undefined;
+            function onPointerDown(event) {
+              if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
+            }
+            function onKeyDown(event) {
+              if (event.key === 'Escape') setOpen(false);
+            }
+            document.addEventListener('mousedown', onPointerDown);
+            document.addEventListener('keydown', onKeyDown);
+            return () => {
+              document.removeEventListener('mousedown', onPointerDown);
+              document.removeEventListener('keydown', onKeyDown);
+            };
+          }, [open]);
+
+          function openPicker() {
+            const parsed = parseDateKey(value) || parseDateKey(today);
+            setView({ year: parsed.year, month: parsed.month });
+            setFocusKey(value || today);
+            setOpen(true);
+          }
+
+          function pick(key) {
+            onChange(key);
+            setOpen(false);
+          }
+
+          function shiftMonth(delta) {
+            const next = new Date(view.year, view.month + delta, 1);
+            setView({ year: next.getFullYear(), month: next.getMonth() });
+          }
+
+          function focusDay(key) {
+            setFocusKey(key);
+            const parsed = parseDateKey(key);
+            if (parsed.year !== view.year || parsed.month !== view.month) {
+              setView({ year: parsed.year, month: parsed.month });
+            }
+            const reveal = () => {
+              if (!rootRef.current) return;
+              const node = rootRef.current.querySelector('[data-day="' + key + '"]');
+              if (node) node.focus();
+            };
+            if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+              window.requestAnimationFrame(reveal);
+            }
+          }
+
+          function onGridKeyDown(event) {
+            const steps = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+            const step = steps[event.key];
+            if (!step) return;
+            event.preventDefault();
+            focusDay(addDays(focusKey, step));
+          }
+
+          const state = value ? dueState({ dueDate: value, done: false }) : 'none';
+          const label = value
+            ? state === 'today'
+              ? t('dueToday')
+              : state === 'tomorrow'
+                ? t('dueTomorrow')
+                : formatDueDate(value, lang)
+            : t('setDate');
+          const weekdays = lang === 'zh' ? ['日', '一', '二', '三', '四', '五', '六'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+          let monthLabel = '';
+          try {
+            monthLabel = new Date(view.year, view.month, 1).toLocaleDateString(lang === 'zh' ? 'zh-Hant' : 'en', {
+              year: 'numeric',
+              month: 'long',
+            });
+          } catch (error) {
+            monthLabel = view.year + '-' + pad2(view.month + 1);
+          }
+
+          return h(
+            'span',
+            { className: 'dsh-todo-datepick', ref: rootRef },
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'dsh-todo-datebtn',
+                onClick: () => (open ? setOpen(false) : openPicker()),
+                'aria-haspopup': 'dialog',
+                'aria-expanded': open,
+                'aria-label': ariaLabel,
+                title: value ? formatDueDate(value, lang) : t('setDate'),
+                'data-active': value ? 'true' : 'false',
+                'data-state': state,
+              },
+              h(CalendarIcon),
+              h('span', { className: 'dsh-todo-datebtn-text' }, label),
+            ),
+            open
+              ? h(
+                  'div',
+                  {
+                    className: 'dsh-todo-calendar' + (menuUp ? ' is-up' : ''),
+                    role: 'dialog',
+                    'aria-label': ariaLabel,
+                  },
+                  h(
+                    'div',
+                    { className: 'dsh-todo-calendar-head' },
+                    h('div', { className: 'dsh-todo-calendar-month' }, monthLabel),
+                    h(
+                      'div',
+                      { className: 'dsh-todo-calendar-nav' },
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'dsh-todo-iconbtn is-prev',
+                          onClick: () => shiftMonth(-1),
+                          'aria-label': t('prevMonth'),
+                          title: t('prevMonth'),
+                        },
+                        h(ChevronDownIcon),
+                      ),
+                      h(
+                        'button',
+                        {
+                          type: 'button',
+                          className: 'dsh-todo-iconbtn is-next',
+                          onClick: () => shiftMonth(1),
+                          'aria-label': t('nextMonth'),
+                          title: t('nextMonth'),
+                        },
+                        h(ChevronDownIcon),
+                      ),
+                    ),
+                  ),
+                  h(
+                    'div',
+                    { className: 'dsh-todo-calendar-week' },
+                    weekdays.map((label2, index) => h('span', { key: index }, label2)),
+                  ),
+                  h(
+                    'div',
+                    { className: 'dsh-todo-calendar-grid', onKeyDown: onGridKeyDown },
+                    monthCells(view.year, view.month).map((cell) =>
+                      h(
+                        'button',
+                        {
+                          key: cell.key,
+                          type: 'button',
+                          className: 'dsh-todo-calendar-day',
+                          'data-day': cell.key,
+                          'data-outside': cell.outside ? 'true' : 'false',
+                          'data-today': cell.key === today ? 'true' : 'false',
+                          'data-selected': cell.key === value ? 'true' : 'false',
+                          tabIndex: cell.key === focusKey ? 0 : -1,
+                          autoFocus: cell.key === focusKey,
+                          onClick: () => pick(cell.key),
+                        },
+                        String(cell.day),
+                      ),
+                    ),
+                  ),
+                  h(
+                    'div',
+                    { className: 'dsh-todo-calendar-foot' },
+                    h('button', { type: 'button', className: 'dsh-todo-mini', onClick: () => pick(today) }, t('dueToday')),
+                    value
+                      ? h('button', { type: 'button', className: 'dsh-todo-mini', onClick: () => pick('') }, t('clearDate'))
+                      : null,
                   ),
                 )
               : null,
@@ -2006,11 +2683,25 @@ window.__ModuleLoader__.load({
           return h(
             'nav',
             { className: 'dsh-todo-rail', 'aria-label': t('pages') },
-            h('div', { className: 'dsh-todo-rail-label' }, t('pages')),
+            h(
+              'div',
+              { className: 'dsh-todo-rail-head' },
+              h('div', { className: 'dsh-todo-rail-label' }, t('pages')),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'dsh-todo-rail-add',
+                  onClick: () => setCreating(true),
+                  'aria-label': t('newPage'),
+                  title: t('newPage'),
+                },
+                h(PlusIcon, { size: 14 }),
+              ),
+            ),
             pages.map((page) => {
               const item = stats.get(page.id) || { open: 0, done: 0, total: 0 };
               const label = page.name || t('defaultPageName');
-              const ratio = item.total > 0 ? Math.round((item.done / item.total) * 100) : 0;
               return h(
                 'button',
                 {
@@ -2030,7 +2721,6 @@ window.__ModuleLoader__.load({
                     ? h('span', { className: 'dsh-todo-pagerail-count' }, String(item.open))
                     : null,
                 ),
-                h('span', { className: 'dsh-todo-rail-rule' }, h('span', { style: { width: ratio + '%' } })),
               );
             }),
             creating
@@ -2058,12 +2748,7 @@ window.__ModuleLoader__.load({
                     h('button', { type: 'submit', className: 'dsh-todo-mini dsh-todo-mini-primary', disabled: !draft.trim() }, t('add')),
                   ),
                 )
-              : h(
-                  'button',
-                  { type: 'button', className: 'dsh-todo-newpage', onClick: () => setCreating(true) },
-                  h(PlusIcon, { size: 13 }),
-                  t('newPage'),
-                ),
+              : null,
           );
         }
 
@@ -2150,7 +2835,22 @@ window.__ModuleLoader__.load({
           return h(
             'nav',
             { className: 'dsh-todo-rail', 'aria-label': t('notes') },
-            h('div', { className: 'dsh-todo-rail-label' }, t('notes')),
+            h(
+              'div',
+              { className: 'dsh-todo-rail-head' },
+              h('div', { className: 'dsh-todo-rail-label' }, t('notes')),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'dsh-todo-rail-add',
+                  onClick: onCreate,
+                  'aria-label': t('newNote'),
+                  title: t('newNote'),
+                },
+                h(PlusIcon, { size: 14 }),
+              ),
+            ),
             notes.map((note) => {
               const label = note.title || t('untitledNote');
               return h(
@@ -2172,12 +2872,6 @@ window.__ModuleLoader__.load({
                 h('span', { className: 'dsh-todo-pagerail-date' }, formatNoteStamp(note.updatedAt, lang)),
               );
             }),
-            h(
-              'button',
-              { type: 'button', className: 'dsh-todo-newpage', onClick: onCreate },
-              h(PlusIcon, { size: 13 }),
-              t('newNote'),
-            ),
           );
         }
 
@@ -2399,6 +3093,7 @@ window.__ModuleLoader__.load({
                 : h(
                     'div',
                     { className: 'dsh-todo-empty' },
+                    h(ListMark, { size: 46 }),
                     h('div', { className: 'dsh-todo-empty-title' }, t('noteEmptyTitle')),
                     h('div', { className: 'dsh-todo-empty-hint' }, t('noteEmptyHint')),
                     h(
@@ -2623,49 +3318,54 @@ window.__ModuleLoader__.load({
               ),
               h(
                 'div',
-                { className: 'dsh-todo-field' },
-                h('span', { className: 'dsh-todo-label' }, t('dueDateLabel')),
+                { className: 'dsh-todo-field-row' },
                 h(
                   'div',
-                  { className: 'dsh-todo-daterow' },
-                  h('input', {
-                    type: 'date',
-                    className: 'dsh-todo-control',
-                    value: dueDate,
-                    onChange: (event) => setDueDate(event.target.value),
-                    'aria-label': t('dueDateLabel'),
-                  }),
-                  dueDate
-                    ? h(
-                        'button',
-                        {
-                          type: 'button',
-                          className: 'dsh-todo-iconbtn',
-                          onClick: () => setDueDate(''),
-                          'aria-label': t('clearDate'),
-                          title: t('clearDate'),
-                        },
-                        h(XIcon),
-                      )
-                    : null,
+                  { className: 'dsh-todo-field' },
+                  h('span', { className: 'dsh-todo-label' }, t('dueDateLabel')),
+                  h(
+                    'div',
+                    { className: 'dsh-todo-daterow' },
+                    h(DatePicker, {
+                      value: dueDate,
+                      onChange: setDueDate,
+                      ariaLabel: t('dueDateLabel'),
+                      t,
+                      lang,
+                      menuUp: true,
+                    }),
+                    dueDate
+                      ? h(
+                          'button',
+                          {
+                            type: 'button',
+                            className: 'dsh-todo-iconbtn',
+                            onClick: () => setDueDate(''),
+                            'aria-label': t('clearDate'),
+                            title: t('clearDate'),
+                          },
+                          h(XIcon),
+                        )
+                      : null,
+                  ),
                 ),
-              ),
-              h(
-                'div',
-                { className: 'dsh-todo-field' },
-                h('span', { className: 'dsh-todo-label' }, t('groupLabel')),
                 h(
-                  SelectMenu,
-                  {
-                    value: groupId,
-                    options: [{ value: '', label: t('groupsInbox') }].concat(
-                      groups.map((group) => ({ value: group.id, label: group.name })),
-                    ),
-                    onChange: setGroupId,
-                    ariaLabel: t('groupLabel'),
-                    className: 'dsh-todo-control dsh-todo-field-select',
-                    menuUp: true,
-                  },
+                  'div',
+                  { className: 'dsh-todo-field' },
+                  h('span', { className: 'dsh-todo-label' }, t('groupLabel')),
+                  h(
+                    SelectMenu,
+                    {
+                      value: groupId,
+                      options: [{ value: '', label: t('groupsInbox') }].concat(
+                        groups.map((group) => ({ value: group.id, label: group.name })),
+                      ),
+                      onChange: setGroupId,
+                      ariaLabel: t('groupLabel'),
+                      className: 'dsh-todo-control dsh-todo-field-select',
+                      menuUp: true,
+                    },
+                  ),
                 ),
               ),
               h(
@@ -2707,6 +3407,7 @@ window.__ModuleLoader__.load({
 
         function Page() {
           useLocaleTick(ctx.locale);
+          const dark = useDarkMode();
           const data = useStore();
           const notesData = useNotesStore();
           const pages = data.pages;
@@ -2766,7 +3467,7 @@ window.__ModuleLoader__.load({
           if (view === 'notes') {
             return h(
               'div',
-              { className: 'dsh-todo-page' },
+              { className: 'dsh-todo-page', 'data-dark': dark ? 'true' : 'false' },
               h('style', null, CSS),
               h(
                 'div',
@@ -2830,6 +3531,8 @@ window.__ModuleLoader__.load({
           }
 
           const filtersActive = statusFilter !== 'all' || dueFilter !== 'any';
+          const progressPercent =
+            pageTasks.length === 0 ? 0 : Math.round((doneCount / pageTasks.length) * 100);
           const pageStatsText =
             pageTasks.length === 0
               ? t('pageStatsEmpty')
@@ -2961,7 +3664,7 @@ window.__ModuleLoader__.load({
 
           return h(
             'div',
-            { className: 'dsh-todo-page' },
+            { className: 'dsh-todo-page', 'data-dark': dark ? 'true' : 'false' },
             h('style', null, CSS),
             h(
               'div',
@@ -3021,6 +3724,7 @@ window.__ModuleLoader__.load({
                           ariaLabel: t('dueFilterLabel'),
                           className: 'dsh-todo-duecontrol',
                           icon: CalendarIcon,
+                          active: dueFilter !== 'any',
                         },
                       ),
                       filtersActive
@@ -3050,6 +3754,20 @@ window.__ModuleLoader__.load({
                         h(TrashIcon),
                       ),
                     ),
+                  ),
+                  h(
+                    'div',
+                    pageTasks.length === 0
+                      ? { className: 'dsh-todo-progress' }
+                      : {
+                          className: 'dsh-todo-progress',
+                          role: 'progressbar',
+                          'aria-label': t('progressLabel'),
+                          'aria-valuemin': 0,
+                          'aria-valuemax': 100,
+                          'aria-valuenow': progressPercent,
+                        },
+                    h('span', { style: { width: progressPercent + '%' } }),
                   ),
                   h(
                     'form',
@@ -3082,12 +3800,12 @@ window.__ModuleLoader__.load({
                     h(
                       'span',
                       { className: 'dsh-todo-composer-field' },
-                      h(CalendarIcon),
-                      h('input', {
-                        type: 'date',
+                      h(DatePicker, {
                         value: draftDue,
-                        onChange: (event) => setDraftDue(event.target.value),
-                        'aria-label': t('dueDateLabel'),
+                        onChange: setDraftDue,
+                        ariaLabel: t('dueDateLabel'),
+                        t,
+                        lang,
                       }),
                     ),
                     h(
@@ -3101,65 +3819,70 @@ window.__ModuleLoader__.load({
                     ? h(
                         'div',
                         { className: 'dsh-todo-empty' },
+                        h(ListMark, { size: 46 }),
                         h('div', { className: 'dsh-todo-empty-title' }, t('emptyTitle')),
                         h('div', { className: 'dsh-todo-empty-hint' }, t('emptyHint')),
                       )
                     : h('div', { className: 'dsh-todo-groups' }, sections),
-                  creatingGroup
-                    ? h(
-                        'form',
-                        { className: 'dsh-todo-groupform', onSubmit: submitGroup },
-                        h('input', {
-                          value: groupDraft,
-                          onChange: (event) => setGroupDraft(event.target.value),
-                          onKeyDown: (event) => {
-                            if (event.key === 'Escape') {
-                              event.stopPropagation();
-                              setCreatingGroup(false);
-                              setGroupDraft('');
-                            }
-                          },
-                          placeholder: t('groupName'),
-                          'aria-label': t('groupName'),
-                          autoFocus: true,
-                          autoComplete: 'off',
-                        }),
-                        h(
+                  h(
+                    'div',
+                    { className: 'dsh-todo-listfoot' },
+                    creatingGroup
+                      ? h(
+                          'form',
+                          { className: 'dsh-todo-groupform', onSubmit: submitGroup },
+                          h('input', {
+                            value: groupDraft,
+                            onChange: (event) => setGroupDraft(event.target.value),
+                            onKeyDown: (event) => {
+                              if (event.key === 'Escape') {
+                                event.stopPropagation();
+                                setCreatingGroup(false);
+                                setGroupDraft('');
+                              }
+                            },
+                            placeholder: t('groupName'),
+                            'aria-label': t('groupName'),
+                            autoFocus: true,
+                            autoComplete: 'off',
+                          }),
+                          h(
+                            'button',
+                            { type: 'submit', className: 'dsh-todo-primary', disabled: !groupDraft.trim() },
+                            h(PlusIcon),
+                            t('createGroup'),
+                          ),
+                          h(
+                            'button',
+                            {
+                              type: 'button',
+                              className: 'dsh-todo-ghost',
+                              onClick: () => {
+                                setCreatingGroup(false);
+                                setGroupDraft('');
+                              },
+                            },
+                            t('cancel'),
+                          ),
+                        )
+                      : h(
                           'button',
-                          { type: 'submit', className: 'dsh-todo-primary', disabled: !groupDraft.trim() },
-                          h(PlusIcon),
-                          t('createGroup'),
+                          { type: 'button', className: 'dsh-todo-newgroup', onClick: () => setCreatingGroup(true) },
+                          h(PlusIcon, { size: 13 }),
+                          t('newGroup'),
                         ),
-                        h(
+                    doneCount > 0
+                      ? h(
                           'button',
                           {
                             type: 'button',
-                            className: 'dsh-todo-ghost',
-                            onClick: () => {
-                              setCreatingGroup(false);
-                              setGroupDraft('');
-                            },
+                            className: 'dsh-todo-clear',
+                            onClick: () => clearCompleted(activePage.id),
                           },
-                          t('cancel'),
-                        ),
-                      )
-                    : h(
-                        'button',
-                        { type: 'button', className: 'dsh-todo-newgroup', onClick: () => setCreatingGroup(true) },
-                        h(PlusIcon, { size: 13 }),
-                        t('newGroup'),
-                      ),
-                  doneCount > 0
-                    ? h(
-                        'button',
-                        {
-                          type: 'button',
-                          className: 'dsh-todo-clear',
-                          onClick: () => clearCompleted(activePage.id),
-                        },
-                        t('clearCompleted'),
-                      )
-                    : null,
+                          t('clearCompleted'),
+                        )
+                      : null,
+                  ),
                 ),
               ),
             ),
