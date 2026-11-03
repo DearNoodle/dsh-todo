@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Todo",
-    "description": "A simple personal todo list in the Harness sidebar."
+    "title": "To Do",
+    "description": "A personal todo list with groups, notes, and due dates in the Harness sidebar."
   }
 }

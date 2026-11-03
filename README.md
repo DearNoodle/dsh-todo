@@ -1,21 +1,29 @@
 # dsh-todo
 
-A small, focused todo list for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI.
+A small, focused todo list for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI. It lives in the sidebar as **To Do** and keeps one personal list in the browser.
 
-It adds a **Todo** icon to the sidebar. The panel holds a single personal list: add a task, tick it off, edit it by double-clicking, or delete it. The list is stored in the browser's `localStorage`, so it survives reloads and stays private to this browser profile.
+## Features
+
+- Add tasks with an optional due date; press Enter or the **Add** button.
+- Click a task's text to open its details: title, free-form notes, due date, and group.
+- Tick a task to complete it; completed tasks stay visible under **Done**.
+- Groups: create, rename, and delete them from **Manage**. Deleting a group moves its tasks to **Inbox** instead of removing them.
+- Filters: group chips, status (**All / Unfinished / Done**), and due date (**Any date / Today / Tomorrow / Next 7 days / Overdue / No date**).
+- Due-date chips turn brand-colored for today and red when overdue.
+- Clear completed tasks for the current group.
+
+Everything is stored in `localStorage` under `dsh-todo:v2` (v1 data is migrated automatically), so the list survives reloads and never leaves this browser profile.
 
 ## Install
 
-From the Harness Web UI:
-
-1. Open **Settings → Plugins**.
-2. Choose **Install bundle** and point it at this directory (or run `plugin_manager` with `action: "install_bundle"` and this directory as the target).
-3. The **Todo** icon appears in the sidebar.
+1. Open **Settings → Plugins** in the Harness Web UI.
+2. Choose **Install bundle** and point it at this directory, or run `plugin_manager` with `action: "install_bundle"` and this directory as the target.
+3. The **To Do** icon appears in the sidebar.
 
 The bundle is a local package (`private: true`); there is no build step.
 
 ## Notes
 
-- Text is localized in English and Chinese.
-- Data lives under the `dsh-todo:v1` key in `localStorage`; removing the bundle leaves it untouched.
+- UI text is localized in English and Chinese. The sidebar entry is always labeled **To Do**.
 - Requires the Harness client packages `@deepseek-ai/dsh-client-ui-slots` and `@deepseek-ai/dsh-client-locale` (shipped with the Web UI).
+- Removing the bundle leaves the stored list untouched.
